@@ -37,14 +37,14 @@ const sequelize = new Sequelize({
   storage: 'path/to/database.sqlite'
 });
 
-// Opção 2: Passando os parãmetros separadamente (other dialetos)
+// Opção 2: Passando os parâmetros separadamente (outros dialetos)
 const sequelize = new Sequelize('database', 'username', 'password', {
   host: 'localhost',
   dialect: /* um destes: 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
 });
 ```
 
-O constructor do Sequelize aceita várias opções. Elas estão documentadas na [API Reference](../class/lib/sequelize.js~Sequelize.html#instance-constructor-constructor).
+O constructor do Sequelize aceita várias opções. Elas estão documentadas na [Referência à API](../class/lib/sequelize.js~Sequelize.html#instance-constructor-constructor).
 
 ### Testando a conexão
 
@@ -78,7 +78,7 @@ const sequelize = new Sequelize("sqlite::memory:");
 // Coloque seu código aqui! Ele funciona!
 ```
 
-Para experimentar outros dialetos que são mais complexos de se configurar localmeente, você pode usar o repositório do GitHub para o [Sequelize SSCCE](https://github.com/papb/sequelize-sscce), que permite que você execute códigos em todos os dialetos suportados diretamente no GitHub, de forma gratuita e sem nenhuma necessidade de configuração!
+Para experimentar outros dialetos que são mais complexos de se configurar localmente, você pode usar o repositório do GitHub para o [Sequelize SSCCE](https://github.com/papb/sequelize-sscce), que permite que você execute códigos em todos os dialetos suportados diretamente no GitHub, de forma gratuita e sem nenhuma necessidade de configuração!
 
 ## Novas bases de dados versus bases de dados existentes
 
@@ -105,6 +105,6 @@ const sequelize = new Sequelize('sqlite::memory:', {
 
 ## Promises e async/await
 
-A maioria dos métodos fornecidos pelo Sequelize é assíncrona e, por causa disso, retorna Promises. Elas são todas [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) , então você pode usar a Promise API (por exemplo, usando `then`, `catch`, `finally`) sem necessidade de qualquer outra configuração.
+A maioria dos métodos fornecidos pelo Sequelize são assíncronos e, por causa disso, retornam Promises. São todos [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) , então você pode usar a Promise API (por exemplo, usando `then`, `catch`, `finally`) sem necessidade de qualquer outra configuração.
 
 E é claro que, ao usar `async` e `await`, isso também funciona da maneira esperada.
