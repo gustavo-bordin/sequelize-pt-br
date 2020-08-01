@@ -1,8 +1,8 @@
 # Associações
 
-Sequelize suporta as associações padrões [Um-Para-Um](https://en.wikipedia.org/wiki/One-to-one_%28data_model%29), [Um-Para-Muitos](https://en.wikipedia.org/wiki/One-to-many_%28data_model%29) and [Muitos-Para-Muitos](https://en.wikipedia.org/wiki/Many-to-many_%28data_model%29).
+Sequelize suporta as associações padrões [Um-Para-Um](https://en.wikipedia.org/wiki/One-to-one_%28data_model%29), [Um-Para-Muitos](https://en.wikipedia.org/wiki/One-to-many_%28data_model%29) e [Muitos-Para-Muitos](https://en.wikipedia.org/wiki/Many-to-many_%28data_model%29).
 
-Para isso, Sequelize oferece **quatro** tipos de associações que devem serem combinadas para criá-las:
+Para isso, Sequelize oferece **quatro** tipos de associações que devem ser combinadas para criá-las:
 
 * A associação `HasOne`
 * A associação `BelongsTo`
@@ -11,9 +11,9 @@ Para isso, Sequelize oferece **quatro** tipos de associações que devem serem c
 
 O guia começará explicando como definir esses quatros tipos de associações, e então irá prosseguir explicando como combina-las para definir os 3 tipos de associações ([Um-Para-Um](https://en.wikipedia.org/wiki/One-to-one_%28data_model%29), [Um-Para-Muitos](https://en.wikipedia.org/wiki/One-to-many_%28data_model%29) e [Muitos-Para-Muitos](https://en.wikipedia.org/wiki/Many-to-many_%28data_model%29)).
 
-## Definindo as associações no sequelize
+## Definindo as associações no Sequelize
 
-Os quatros tipos de associações são definidos em uma forma muito parecida. Suponhamos que temos 2 modelos, `A` e `B`. Para dizer ao sequelize que você quer uma associação entre as duas, basta chamar uma função:
+Os quatros tipos de associações são definidos de forma muito parecida. Suponhamos que temos 2 modelos, `A` e `B`. Para dizer ao Sequelize que você quer uma associação entre as duas, basta chamar uma função:
 
 ```js
 const A = sequelize.define('A', /* ... */);
@@ -50,7 +50,7 @@ A associação `A.belongsToMany(B, { through: 'C' })`  significa que um relacion
 
 Essas são as ideias principais envolvidas em cada tipo de associação. Entretanto, esses relacionamentos são frequentemente usados em pares, para permitir um melhor uso com o Sequelize. Isso será visto mais tarde.
 
-## Criando os relacionamentos padrões
+## Criando os relacionamentos padrão
 
 Como mencionado, As associações no Sequelize são comumente definidas em pares. No sumário:
 
