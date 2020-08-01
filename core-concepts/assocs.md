@@ -1,6 +1,6 @@
 # Associações
 
-Sequelize suporta as associações padrões [Um-Para-Um](https://en.wikipedia.org/wiki/One-to-one_%28data_model%29), [Um-Para-Muitos](https://en.wikipedia.org/wiki/One-to-many_%28data_model%29) e [Muitos-Para-Muitos](https://en.wikipedia.org/wiki/Many-to-many_%28data_model%29).
+Sequelize suporta as associações padrão [Um-Para-Um](https://en.wikipedia.org/wiki/One-to-one_%28data_model%29), [Um-Para-Muitos](https://en.wikipedia.org/wiki/One-to-many_%28data_model%29) e [Muitos-Para-Muitos](https://en.wikipedia.org/wiki/Many-to-many_%28data_model%29).
 
 Para isso, Sequelize oferece **quatro** tipos de associações que devem ser combinadas para criá-las:
 
