@@ -13,7 +13,7 @@ O guia começará explicando como definir esses quatros tipos de associações, 
 
 ## Definindo as associações no Sequelize
 
-Os quatros tipos de associações são definidos de forma muito parecida. Suponhamos que temos 2 modelos, `A` e `B`. Para dizer ao Sequelize que você quer uma associação entre as duas, basta chamar uma função:
+Os quatros tipos de associações são definidos de forma muito parecida. Suponhamos que temos 2 modelos, `A` e `B`. Para dizer ao Sequelize que você quer uma associação entre os dois, basta chamar uma função:
 
 ```js
 const A = sequelize.define('A', /* ... */);
