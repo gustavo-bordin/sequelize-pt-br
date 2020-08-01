@@ -42,9 +42,9 @@ A associação `A.belongsTo(B)` significa que uma relação de Um-Para-Um existe
 
 A associação `A.hasMany(B)` signifia que uma relação de Um-Para-Muitos existe entre `A` e `B`, com a chave estrangeira sendo definida na modelo alvo (`B`).
 
-Essas três chamadas irá fazer com que o Sequelize adicione automaticamente chaves estrangeiras para as modelos apropriados (A menos que elas ja estejam definidas).
+Essas três chamadas irá fazer com que o Sequelize adicione automaticamente chaves estrangeiras para as modelos apropriados (A menos que elas já estejam definidas).
 
-A associação `A.belongsToMany(B, { through: 'C' })`  significa que um relacionamento de Muitos-Para-Muitos existe entre `A` e `B`, usando a tabela `C` como [Tabela de junção](https://en.wikipedia.org/wiki/Associative_entity), que irá ter as chaves estrangeiras (`aId` e `bId`, por exemplo). Sequeliza irá criar automaticamente o modelo `C` (a menos que ele ja existe) e definir as chaves estrangeiras apropriadas a ela.
+A associação `A.belongsToMany(B, { through: 'C' })`  significa que um relacionamento de Muitos-Para-Muitos existe entre `A` e `B`, usando a tabela `C` como [Tabela de junção](https://en.wikipedia.org/wiki/Associative_entity), que irá ter as chaves estrangeiras (`aId` e `bId`, por exemplo). Sequeliza irá criar automaticamente o modelo `C` (a menos que ele já exista) e definir as chaves estrangeiras apropriadas a ele.
 
 *Nota: Nos exemplos de `belongsToMany` acima, uma string (`'C'`) foi passada para a opção through. Nesse caso, Sequelize gera automaticamente um modelo com esse nome. Porém, você também pode passar um modelo diretamente, se você já definiu um*
 
@@ -67,9 +67,9 @@ Tudo isso será visto em detalhes a seguir. As vantagens de usar pares em vez de
 
 Antes de se aprofundar nos aspectos do uso do Sequelize, é recomendável dar um passo para trás para entender o que acontece por tras de um relacionamento individual.
 
-Digamos que temos dois modelos, `Foo` e `Bar`. Queremos estabelecer um relacionamento de  Um-Para-Um Entre Foo e Bar. Sabemos que em um banco de dados relacional, isso seria feito criando uma chave estrangeira em uma das tabelas. Então nesse caso, uma pergunta muito relevante é: em qual dessas tabelas queremos que a chave estrangeira seja adicionada? Em outras palavras, queremos que `Foo` tenha uma coluna `barId`, ou ao invés disso, `Bar` é quem deveria ter uma coluna `fooId` ?
+Digamos que temos dois modelos, `Foo` e `Bar`. Queremos estabelecer um relacionamento de  Um-Para-Um Entre Foo e Bar. Sabemos que em um banco de dados relacional, isso seria feito criando uma chave estrangeira em uma das tabelas. Então nesse caso, uma pergunta muito relevante é: em qual dessas tabelas queremos que a chave estrangeira se já adicionada? Em outras palavras, queremos que `Foo` tenha uma coluna `barId`, ou ao invés disso, `Bar` é quem deveria ter uma coluna `fooId` ?
 
-A principio, ambas opções são válidas ao estabelecer um relacionamento de Um-Para-Um entre Foo e Bar. Todavia, quando dizemos algo como *"há um relacionamento de Um-Para-Um entre Foo e Bar"*, não fica claro se o relacionamento é obrigatório ou opcional. Em outras palavras,  Foo pode existir sem Bar? Do mesmo modo, Bar pode existir sem Foo? As respostas para essas perguntas ajudam a definir onde queremos que a chave estrangeira seja aplicada.
+A principio, ambas opções são válidas ao estabelecer um relacionamento de Um-Para-Um entre Foo e Bar. Todavia, quando dizemos algo como *"há um relacionamento de Um-Para-Um entre Foo e Bar"*, não fica claro se o relacionamento é obrigatório ou opcional. Em outras palavras,  Foo pode existir sem Bar? Do mesmo modo, Bar pode existir sem Foo? As respostas para essas perguntas ajudam a definir onde queremos que a chave estrangeira se já aplicada.
 
 ### Objetivo
 
@@ -301,7 +301,7 @@ CREATE TABLE IF NOT EXISTS "AtorFilmes" (
   "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL,
   "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL,
   UNIQUE ("FilmeId", "AtorId"),     -- Note: Sequelize inseriu a especificação UNIQUE
-  PRIMARY KEY ("FilmeId","AtorId")  -- isso é irrelevante ja que também é PRIMARY KEY
+  PRIMARY KEY ("FilmeId","AtorId")  -- isso é irrelevante já que também é PRIMARY KEY
 );
 ```
 
@@ -406,7 +406,7 @@ Os exemplos acima mostraram o básico de busca de dados envolvendo associações
 
 ## Apelidos para associação & Chaves Estrangeiras personalizadas
 
-Em todos os exemplos acima, Sequelize definiu automaticamente o nome das chaves estrangeiras. Por exemplo, no exemplo do Capitão e o Navio, o Sequelize automaticamente  definiu um campo `captainId` no modelo do Navio. Entretando, é facil especificar uma chave estrangeira personalizada.
+Em todos os exemplos acima, Sequelize definiu automaticamente o nome das chaves estrangeiras. Por exemplo, no exemplo do Capitão e o Navio, o Sequelize automaticamente  definiu um campo `capitaoId` no modelo do Navio. Entretando, é facil especificar uma chave estrangeira personalizada.
 
 Vamos considerar os modelos Navio e Capitao em uma forma mais simplificada, apenas para focar no tópico atual, como mostrado abaixo (menos campos):
 
@@ -431,11 +431,11 @@ Navio.belongsTo(Capitao); // Isso cria a chave estrangeira 'capitaoId' no Navio
 // Eager Loading é feito passando o modelo à opção 'include'
 console.log((await Navio.findAll({ include: Capitao })).toJSON());
 // Ou especificando o nome do modelo associado
-console.log((await Navio.findAll({ include: 'captain' })).toJSON());
+console.log((await Navio.findAll({ include: 'capitao' })).toJSON());
 
 // Também, as instancias ganham o método `getCapitao()` para Lazy Loading:
-const ship = Navio.findOne();
-console.log((await ship.getCapitao()).toJSON());
+const navio = Navio.findOne();
+console.log((await navio.getCapitao()).toJSON());
 ```
 
 ### Especificando o nome da chave estrangeira diretamente
@@ -504,7 +504,7 @@ console.log((await Navio.findAll({
   }
 })).toJSON());
 
-// Também, as intâncias ganham o método `getLeader()` para Lazy Loading:
+// Também, as intâncias ganham o método `getLider()` para Lazy Loading:
 const navio = Navio.findOne();
 console.log((await navio.getLider()).toJSON());
 ```
@@ -709,7 +709,7 @@ console.log((await navio.getCapitao()).nome); // "Biroliro"
 
 ### Para os relacionamentos `hasOne` e `hasMany`
 
-A exata mesma ideia pode ser aplicada as associações `hasOne` e `hasMany`, mas ao invés de especificar uma `targetKey`, especificamos `sourceKey` ao definir a associação. Isso porque diferente de `belongsTo`, as associações `hasOne` e `hasMany` mantem as chaves estrangeiras no modelo:
+A exata mesma ideia pode ser aplicada às associações `hasOne` e `hasMany`, mas ao invés de especificar uma `targetKey`, especificamos `sourceKey` ao definir a associação. Isso porque diferente de `belongsTo`, as associações `hasOne` e `hasMany` mantêm as chaves estrangeiras no modelo:
 
 ```js
 const Foo = sequelize.define('foo', {
@@ -781,4 +781,4 @@ O truque para decidir entre `sourceKey` e `targetKey` é apenas lembrar onde cad
 
 * `A.hasOne(B)` e `A.hasMany(B)` mantém a chave estrangeira no modelo alvo (`B`), portanto a chave referenciada está no modelo origem, consequentemente o uso de `sourceKey`.
 
-* `A.belongsToMany(B)` envolve um modelo extra (a tabela de junção), portnato ambos  `sourceKey` e `targetKey` são utilizáveis, com `sourceKey` correspondendo á algum campo em  `A` (a origem) e `targetKey` correspondendo á algum campo em `B` (o alvo).
+* `A.belongsToMany(B)` envolve um modelo extra (a tabela de junção), portanto ambos  `sourceKey` e `targetKey` são utilizáveis, com `sourceKey` correspondendo a algum campo em  `A` (a origem) e `targetKey` correspondendo a algum campo em `B` (o alvo).
