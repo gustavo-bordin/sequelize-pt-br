@@ -1,92 +1,92 @@
-# Associations
+# Associações
 
-Sequelize supports the standard associations: [One-To-One](https://en.wikipedia.org/wiki/One-to-one_%28data_model%29), [One-To-Many](https://en.wikipedia.org/wiki/One-to-many_%28data_model%29) and [Many-To-Many](https://en.wikipedia.org/wiki/Many-to-many_%28data_model%29).
+Sequelize suporta as associações padrões [Um-Para-Um](https://en.wikipedia.org/wiki/One-to-one_%28data_model%29), [Um-Para-Muitos](https://en.wikipedia.org/wiki/One-to-many_%28data_model%29) and [Muitos-Para-Muitos](https://en.wikipedia.org/wiki/Many-to-many_%28data_model%29).
 
-To do this, Sequelize provides **four** types of associations that should be combined to create them:
+Para isso, Sequelize oferece **quatro** tipos de associações que devem serem combinadas para criá-las:
 
-* The `HasOne` association
-* The `BelongsTo` association
-* The `HasMany` association
-* The `BelongsToMany` association
+* A associação `HasOne`
+* A associação `BelongsTo`
+* A associação `HasMany` 
+* A associação `BelongsToMany`
 
-The guide will start explaining how to define these four types of associations, and then will follow up to explain how to combine those to define the three standard association types ([One-To-One](https://en.wikipedia.org/wiki/One-to-one_%28data_model%29), [One-To-Many](https://en.wikipedia.org/wiki/One-to-many_%28data_model%29) and [Many-To-Many](https://en.wikipedia.org/wiki/Many-to-many_%28data_model%29)).
+O guia começará explicando como definir esses quatros tipos de associações, e então irá prosseguir explicando como combina-las para definir os 3 tipos de associações ([Um-Para-Um](https://en.wikipedia.org/wiki/One-to-one_%28data_model%29), [Um-Para-Muitos](https://en.wikipedia.org/wiki/One-to-many_%28data_model%29) e [Muitos-Para-Muitos](https://en.wikipedia.org/wiki/Many-to-many_%28data_model%29)).
 
-## Defining the Sequelize associations
+## Definindo as associações no sequelize
 
-The four association types are defined in a very similar way. Let's say we have two models, `A` and `B`. Telling Sequelize that you want an association between the two needs just a function call:
+Os quatros tipos de associações são definidos em uma forma muito parecida. Suponhamos que temos 2 tabelas, `A` e `B`. Para dizer ao sequelize que você quer uma associação entre as duas, basta chamar uma função:
 
 ```js
 const A = sequelize.define('A', /* ... */);
 const B = sequelize.define('B', /* ... */);
 
-A.hasOne(B); // A HasOne B
-A.belongsTo(B); // A BelongsTo B
-A.hasMany(B); // A HasMany B
-A.belongsToMany(B, { through: 'C' }); // A BelongsToMany B through the junction table C
+A.hasOne(B); // A Tem um B
+A.belongsTo(B); // A pertence a B
+A.hasMany(B); // A tem muitos B
+A.belongsToMany(B, { through: 'C' }); // A pertence a muitos B através da tabela de junção C
 ```
 
-They all accept an options object as a second parameter (optional for the first three, mandatory for `belongsToMany` containing at least the `through` property):
+Todos eles aceitam um objeto de opções como um segundo parâmetro (opcional para os três primeiros, obrigatório para belongsToMany contendo pelo menos a propriedade through):
 
 ```js
-A.hasOne(B, { /* options */ });
-A.belongsTo(B, { /* options */ });
-A.hasMany(B, { /* options */ });
-A.belongsToMany(B, { through: 'C', /* options */ });
+A.hasOne(B, { /* opções */ });
+A.belongsTo(B, { /* opções */ });
+A.hasMany(B, { /* opções */ });
+A.belongsToMany(B, { through: 'C', /* opções */ });
 ```
 
-The order in which the association is defined is relevant. In other words, the order matters, for the four cases. In all examples above, `A` is called the **source** model and `B` is called the **target** model. This terminology is important.
+A ordem em que a associação é definida é relevante. Em outras palavras, a ordem importa, para os quatro casos. Em todos os exemplos acima, `A` é chamado de tabela **source (origem)** e `B` é chamado de tabela **target (alvo)**. Essa terminologia é importante.
 
-The `A.hasOne(B)` association means that a One-To-One relationship exists between `A` and `B`, with the foreign key being defined in the target model (`B`).
+A associação `A.hasOne(B)` significa que uma relação de Um-Para-Um existe entre `A` e `B`, com a chave estrangeira sendo definida na tabela alvo (`B`).
 
-The `A.belongsTo(B)` association means that a One-To-One relationship exists between `A` and `B`, with the foreign key being defined in the source model (`A`).
+A associação `A.belongsTo(B)` significa que uma relação de Um-Para-Um existe entre `A` e `B`, com a chave estrangeira sendo definida na tabela origem (`A`).
 
-The `A.hasMany(B)` association means that a One-To-Many relationship exists between `A` and `B`, with the foreign key being defined in the target model (`B`).
+A associação `A.hasMany(B)`  signifia que uma relação de Um-Para-Muitos existe entre `A` e `B`, com a chave estrangeira sendo definida na tabela alvo (`B`).
 
-These three calls will cause Sequelize to automatically add foreign keys to the appropriate models (unless they are already present).
+Essas três chamadas irá fazer com que o Sequelize adicione automaticamente chaves estrangeiras  para as tabelas apropriadas (A menos que elas ja estejam definidas).
 
-The `A.belongsToMany(B, { through: 'C' })` association means that a Many-To-Many relationship exists between `A` and `B`, using table `C` as [junction table](https://en.wikipedia.org/wiki/Associative_entity), which will have the foreign keys (`aId` and `bId`, for example). Sequelize will automatically create this model `C` (unless it already exists) and define the appropriate foreign keys on it.
+A associação `A.belongsToMany(B, { through: 'C' })`  significa que um relacionamento de Muitos-Para-Muitos existe entre `A` e `B`, usando a tabela `C` como [Tabela de junção](https://en.wikipedia.org/wiki/Associative_entity), que irá ter as chaves estrangeiras (`aId` e `bId`, por exemplo). Sequeliza irá criar automaticamente a tabela `C` (a menos que ela ja existe) e definir as chaves estrangeiras apropriadas a ela.
 
-*Note: In the examples above for `belongsToMany`, a string (`'C'`) was passed to the through option. In this case, Sequelize automatically generates a model with this name. However, you can also pass a model directly, if you have already defined it.*
+*Nota: Nos exemplos acima para `belongsToMany`, uma string (`'C'`) foi passada para a opção through. Nesse caso, Sequelize gera automaticamente uma tabela com esse nome. Entretanto, você também pode passar esse modelo diretamente, se você já o definiu.*
 
-These are the main ideas involved in each type of association. However, these relationships are often used in pairs, in order to enable better usage with Sequelize. This will be seen later on.
+Essas são as ideias principais envolvidas em cada tipo de associação. Entretanto, esses relacionamentos são frequentemente usados em pares, para permitir um melhor uso com o Sequelize. Isso será visto mais tarde.
 
-## Creating the standard relationships
+## Criando os relacionamentos padrões
 
-As mentioned, usually the Sequelize associations are defined in pairs. In summary:
+Como mencionado, As associações no Sequelize são comumente definidas em pares. No sumário:
 
-* To create a **One-To-One** relationship, the `hasOne` and `belongsTo` associations are used together;
-* To create a **One-To-Many** relationship, the `hasMany` and `belongsTo` associations are used together;
-* To create a **Many-To-Many** relationship, two `belongsToMany` calls are used together.
-  * Note: there is also a *Super Many-To-Many* relationship, which uses six associations at once, and will be discussed in the [Advanced Many-to-Many relationships guide](advanced-many-to-many.html).
+* Para criar o relacionamento de **Um-Para-Um** , as associações `hasOne` e `belongsTo` são usadas juntas;
+* Para criar o relacionamento de **Um-Para-Muitos** , as associações `hasMany` e `belongsTo` são usadas juntas;
+* Para criar o relacionamento de **Muitos-Para-Muitos** , duas chamadas à `belongsToMany` são usadas juntas
+  * Nota: Também há um relacionamento *Super Muitos-Para-Muitos* , que usa seis associações ao mesmo tempo, e será discutido no [Guia avançado de relacionamento Muitos-Para-Muitos](advanced-many-to-many.html).
 
-This will all be seen in detail next. The advantages of using these pairs instead of one single association will be discussed in the end of this chapter.
+Tudo isso será visto em detalhes a seguir. As vantagens de usar pares em vez de uma associação individual serão discutidas no final desse capítulo.
 
-## One-To-One relationships
+## Relacionamentos de Um-Para-Um
 
-### Philosophy
+### Filosofia
 
-Before digging into the aspects of using Sequelize, it is useful to take a step back to consider what happens with a One-To-One relationship.
+Antes de se aprofundar nos aspectos do uso do Sequelize, é recomendável dar um passo para trás para entender o que acontece por tras de um relacionamento individual.
 
-Let's say we have two models, `Foo` and `Bar`. We want to establish a One-To-One relationship between Foo and Bar. We know that in a relational database, this will be done by establishing a foreign key in one of the tables. So in this case, a very relevant question is: in which table do we want this foreign key to be? In other words, do we want `Foo` to have a `barId` column, or should `Bar` have a `fooId` column instead?
+Digamos que temos duas tabelas, `Foo` e `Bar`. Queremos estabelecer um relacionamento de  Um-Para-Um Entre Foo e Bar. Sabemos que em um banco de dados relacional, isso seria feito criando uma chave estrangeira em uma das tabelas. Então nesse caso, uma pergunta muito relevante é: em qual dessas tabelas queremos que a chave estrangeira seja adicionada? Em outras palavras, queremos que `Foo` tenha uma coluna `barId`, ou ao invés disso, `Bar` é quem deveria ter uma coluna `fooId` ?
 
-In principle, both options are a valid way to establish a One-To-One relationship between Foo and Bar. However, when we say something like *"there is a One-To-One relationship between Foo and Bar"*, it is unclear whether or not the relationship is *mandatory* or optional. In other words, can a Foo exist without a Bar? Can a Bar exist without a Foo? The answers to these questions helps figuring out where we want the foreign key column to be.
+A principio, ambas opções são válidas ao estabelecer um relacionamento de Um-Para-Um entre Foo e Bar. Todavia, quando dizemos algo como *"há um relacionamento de Um-Para-Um entre Foo e Bar"*, não fica claro se o relacionamento é obrigatório ou opcional. Em outras palavras, a tabela Foo pode existir sem a tabela Bar? A tabela Bar pode existir sem a tabela Foo? As respostas para essas perguntas ajudam a definir onde queremos que a chave estrangeira seja aplicada.
 
-### Goal
+### Objetivo
 
-For the rest of this example, let's assume that we have two models, `Foo` and `Bar`. We want to setup a One-To-One relationship between them such that `Bar` gets a `fooId` column.
+Para o restante desse exemplo, vamos supor que temos duas tabelas, `Foo` e `Bar`. Queremos estabelecer um relacionamento de Um-Para-Um entre elas, de uma forma que `Bar` tenha uma coluna `fooId`.
 
-### Implementation
+### Implementação
 
-The main setup to achieve the goal is as follows:
+A estrutura principal para atingir esse objetivo é a seguinte:
 
 ```js
 Foo.hasOne(Bar);
 Bar.belongsTo(Foo);
 ```
 
-Since no option was passed, Sequelize will infer what to do from the names of the models. In this case, Sequelize knows that a `fooId` column must be added to `Bar`.
+Já que não foi passado nenhuma opção como segundo parâmetro, Sequelize irá deduzir o que fazer a partir dos nomes das tabelas. Nesse caso, Sequelize sabe que uma coluna `fooId` precisa ser adicionada a `Bar`.
 
-This way, calling `Bar.sync()` after the above will yield the following SQL (on PostgreSQL, for example):
+Dessa forma, chamar `Bar.sync()` após o procedimento acima produzirá o seguinte SQL (no PostgreSQL, por exemplo)
 
 ```sql
 CREATE TABLE IF NOT EXISTS "foos" (
@@ -99,13 +99,13 @@ CREATE TABLE IF NOT EXISTS "bars" (
 );
 ```
 
-### Options
+### Opções
 
-Various options can be passed as a second parameter of the association call.
+Várias opções podem ser passadas como segundo parametro da função que realiza a associação
 
-#### `onDelete` and `onUpdate`
+#### `onDelete` e `onUpdate`
 
-For example, to configure the `ON DELETE` and `ON UPDATE` behaviors, you can do:
+Por exemplo, para configurar o comportamento `ON DELETE` e `ON UPDATE`
 
 ```js
 Foo.hasOne(Bar, {
@@ -115,22 +115,22 @@ Foo.hasOne(Bar, {
 Bar.belongsTo(Foo);
 ```
 
-The possible choices are `RESTRICT`, `CASCADE`, `NO ACTION`, `SET DEFAULT` and `SET NULL`.
+As possíveis escolhas são `RESTRICT`, `CASCADE`, `NO ACTION`, `SET DEFAULT` e `SET NULL`.
 
-The defaults for the One-To-One associations is `SET NULL` for `ON DELETE` and `CASCADE` for `ON UPDATE`.
+O padrão para associacões de Um-Para-Um são `SET NULL` para `ON DELETE` e `CASCADE` para `ON UPDATE`.
 
-#### Customizing the foreign key
+#### Customizando a chave estrangeira
 
-Both the `hasOne` and `belongsTo` calls shown above will infer that the foreign key to be created should be called `fooId`. To use a different name, such as `myFooId`:
+Ambas as chamads `hasOne` e `belongsTo` mostradas acima irão deduzir que a chave estrangeira a ser criada deve ser chamada de `fooId`. Para usar um nome diferente, como `myFooId`:
 
 ```js
-// Option 1
+// Opção 1
 Foo.hasOne(Bar, {
   foreignKey: 'myFooId'
 });
 Bar.belongsTo(Foo);
 
-// Option 2
+// Opção 2
 Foo.hasOne(Bar, {
   foreignKey: {
     name: 'myFooId'
@@ -138,13 +138,13 @@ Foo.hasOne(Bar, {
 });
 Bar.belongsTo(Foo);
 
-// Option 3
+// Opção 3
 Foo.hasOne(Bar);
 Bar.belongsTo(Foo, {
   foreignKey: 'myFooId'
 });
 
-// Option 4
+// Opção 4
 Foo.hasOne(Bar);
 Bar.belongsTo(Foo, {
   foreignKey: {
@@ -153,9 +153,9 @@ Bar.belongsTo(Foo, {
 });
 ```
 
-As shown above, the `foreignKey` option accepts a string or an object. When receiving an object, this object will be used as the definition for the column just like it would do in a standard `sequelize.define` call. Therefore, specifying options such as `type`, `allowNull`, `defaultValue`, etc, just  work.
+Como mostrado acima, a opção `foreignKey` aceita uma string ou um objeto. quando recebe um objeto, o mesmo será usado como definição para a coluna, da mesma forma que faria em uma chamada a função `sequelize.define`. Portanto, especificando opções como `type`, `allowNull`, `defaultValue`, etc, funciona.
 
-For example, to use `UUID` as the foreign key data type instead of the default (`INTEGER`), you can simply do:
+Por exemplo, para usar `UUID` como tipo de dado da chave estrangeiro em vez do padrão (`INTEGER`), você pode simplesmente fazer:
 
 ```js
 const { DataTypes } = require("Sequelize");
@@ -169,9 +169,9 @@ Foo.hasOne(Bar, {
 Bar.belongsTo(Foo);
 ```
 
-#### Mandatory versus optional associations
+#### Associações obrigatórias versus opcionais
 
-By default, the association is considered optional. In other words, in our example, the `fooId` is allowed to be null, meaning that one Bar can exist without a Foo. Changing this is just a matter of specifying `allowNull: false` in the foreign key options:
+Por padrão, a associação é considerada opcional. Em outras palavras, no nosso exemplo, a coluna `fooId` pode ser nula, significando que a tabela Bar pode existir sem a tabela Foo. Alterar isso é simplesmente definir `allowNull: false` nas opções de chave estrangeira:
 
 ```js
 Foo.hasOne(Bar, {
@@ -182,9 +182,9 @@ Foo.hasOne(Bar, {
 // "fooId" INTEGER NOT NULL REFERENCES "foos" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT
 ```
 
-## One-To-Many relationships
+## Relacionamentos de Um-Para-Muitos
 
-### Philosophy
+### Filosofia
 
 One-To-Many associations are connecting one source with multiple targets, while all these targets are connected only with this single source.
 
