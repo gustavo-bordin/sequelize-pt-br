@@ -1,19 +1,18 @@
-# Getting Started
+# Iniciando
 
-In this tutorial you will learn to make a simple setup of Sequelize.
+Neste tutorial você aprenderá a fazer uma configuração simples do Sequelize.
 
-## Installing
+## Instalando
 
-Sequelize is available via [npm](https://www.npmjs.com/package/sequelize) (or [yarn](https://yarnpkg.com/package/sequelize)).
+O Sequelize está disponível via npm [npm](https://www.npmjs.com/package/sequelize) (ou [yarn](https://yarnpkg.com/package/sequelize)).
 
 ```sh
 npm install --save sequelize
 ```
-
-You'll also have to manually install the driver for your database of choice:
+Você também precisará fazer manualmente a instalação do driver para o banco de dados de sua escolha:
 
 ```sh
-# One of the following:
+# Uma das opções abaixo:
 $ npm install --save pg pg-hstore # Postgres
 $ npm install --save mysql2
 $ npm install --save mariadb
@@ -21,35 +20,35 @@ $ npm install --save sqlite3
 $ npm install --save tedious # Microsoft SQL Server
 ```
 
-## Connecting to a database
+## Conectando-se a uma base de dados
 
-To connect to the database, you must create a Sequelize instance. This can be done by either passing the connection parameters separately to the Sequelize constructor or by passing a single connection URI:
+Para conexão a uma base de dados, você precisa instanciar o Sequelize. Isso pode ser feito passando os parâmetros de conexão separadamente para o constructor do Sequelize ou passando uma URI única de conexão:
 
 ```js
 const { Sequelize } = require('sequelize');
 
-// Option 1: Passing a connection URI
-const sequelize = new Sequelize('sqlite::memory:') // Example for sqlite
-const sequelize = new Sequelize('postgres://user:pass@example.com:5432/dbname') // Example for postgres
+// Opção 1: Passando uma URI de conexão
+const sequelize = new Sequelize('sqlite::memory:') // Examplo para o sqlite
+const sequelize = new Sequelize('postgres://user:pass@example.com:5432/dbname') // Exemplo para o postgres
 
-// Option 2: Passing parameters separately (sqlite)
+// Opção 2: Passando os parâmetros separadamente (sqlite)
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: 'path/to/database.sqlite'
 });
 
-// Option 2: Passing parameters separately (other dialects)
+// Opção 2: Passando os parâmetros separadamente (outros dialetos)
 const sequelize = new Sequelize('database', 'username', 'password', {
   host: 'localhost',
-  dialect: /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
+  dialect: /* um destes: 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
 });
 ```
 
-The Sequelize constructor accepts a lot of options. They are documented in the [API Reference](../class/lib/sequelize.js~Sequelize.html#instance-constructor-constructor).
+O constructor do Sequelize aceita várias opções. Elas estão documentadas na [Referência à API](../class/lib/sequelize.js~Sequelize.html#instance-constructor-constructor).
 
-### Testing the connection
+### Testando a conexão
 
-You can use the `.authenticate()` function to test if the connection is OK:
+Você pode usar a função `.authenticate()` para testar se a conexão está funcionando corretamente:
 
 ```js
 try {
@@ -60,52 +59,52 @@ try {
 }
 ```
 
-### Closing the connection
+### Fechando a conexão
 
-Sequelize will keep the connection open by default, and use the same connection for all queries. If you need to close the connection, call `sequelize.close()` (which is asynchronous and returns a Promise).
+O Sequelize mantém a conexão aberta por padrão e a usa para todas as consultas. Se você precisar fechar a conexão, chame a função `sequelize.close()` (que é assíncrona e retorna uma Promise).
 
-## Terminology convention
+## Convenções de terminologia
 
-Observe that, in the examples above, `Sequelize` refers to the library itself while `sequelize` refers to an instance of Sequelize, which represents a connection to one database. This is the recommended convention and it will be followed throughout the documentation.
+Note que, nos exemplos acima, `Sequelize` refere-se à biblioteca em si, enquanto `sequelize` se refere a uma instância do Sequelize, que representa uma conexão com uma base de dados. Essa é a convenção de terminologia recomendada e é a que será usada em toda a documentação.
 
-## Tip for reading the docs
+## Dica para leitura da documentação
 
-You are encouraged to run code examples locally while reading the Sequelize docs. This will help you learn faster. The easiest way to do this is using the SQLite dialect:
+Encorajamos você a executar os códigos de exemplo de forma local enquanto lê a documentação do Sequelize. Isso ajudará a agilizar seu aprendizado. A maneira mais fácil de se fazer isso é usando o dialeto do SQLite:
 
 ```js
 const { Sequelize, Op, Model, DataTypes } = require("sequelize");
 const sequelize = new Sequelize("sqlite::memory:");
 
-// Code here! It works!
+// Coloque seu código aqui! Ele funciona!
 ```
 
-To experiment with the other dialects, which are harder to setup locally, you can use the [Sequelize SSCCE](https://github.com/papb/sequelize-sscce) GitHub repository, which allows you to run code on all supported dialects directly from GitHub, for free, without any setup!
+Para experimentar outros dialetos que são mais complexos de se configurar localmente, você pode usar o repositório do GitHub para o [Sequelize SSCCE](https://github.com/papb/sequelize-sscce), que permite que você execute códigos em todos os dialetos suportados diretamente no GitHub, de forma gratuita e sem nenhuma necessidade de configuração!
 
-## New databases versus existing databases
+## Novas bases de dados versus bases de dados existentes
 
-If you are starting a project from scratch, and your database does not exist yet, Sequelize can be used since the beginning in order to automate the creation of every table in your database.
+Se você está começando um projeto do zero e sua base de dados ainda não foi criada, o Sequelize pode ser usado desde o princípio para automatizar a criação de cada tabela no seu banco.
 
-Also, if you want to use Sequelize to connect to a database that is already filled with tables and data, that works as well! Sequelize has got you covered in both cases.
+E ainda, se você quer usar o Sequelize para conexão a uma base de dados já populada com tabelas e dados, isso também é possível. O Sequelize vai te ajudar em ambos os casos.
 
 ## Logging
 
-By default, Sequelize will log to console every SQL query it performs. The `options.logging` option can be used to customize this behavior, by defining the function that gets executed every time Sequelize would log something. The default value is `console.log` and when using that only the first log parameter of log function call is displayed. For example, for query logging the first parameter is the raw query and the second (hidden by default) is the Sequelize object.
+Por padrão, o Sequelize vai fazer o logging para o console de toda operação SQL performada. A opção `options.logging` pode ser usada para customizar esse comportamento, definindo qual função deve ser executada toda vez que o Sequelize precisar fazer o log de algo. O valor padrão é `console.log` e quando usado, somente o primeiro valor de log da chamada à função de log é exibido. Por exemplo: para o log de consultas, o primeiro valor exibido é a raw query e o segundo (que é ocultado por padrão) é o objeto Sequelize.
 
-Common useful values for `options.logging`:
+Alguns valores úteis para `options.logging`:
 
 ```js
 const sequelize = new Sequelize('sqlite::memory:', {
-  // Choose one of the logging options
-  logging: console.log,                  // Default, displays the first parameter of the log function call
-  logging: (...msg) => console.log(msg), // Displays all log function call parameters
-  logging: false,                        // Disables logging
-  logging: msg => logger.debug(msg),     // Use custom logger (e.g. Winston or Bunyan), displays the first parameter
-  logging: logger.debug.bind(logger)     // Alternative way to use custom logger, displays all messages
+  // Escolha uma das opções de logging
+  logging: console.log,                  // Padrão, exibe o primeiro parâmetro da chamada à função de logging
+  logging: (...msg) => console.log(msg), // Exibe todos os parâmetros da chamada à função de logging
+  logging: false,                        // Desativa o logging
+  logging: msg => logger.debug(msg),     // Utiliza um logger customizado  (ex. Winston ou Bunyan), exibindo o primeiro parâmetro
+  logging: logger.debug.bind(logger)     // Modo alternativo para uso de um logger customizado, exibe todos as mensagens
 });
 ```
 
-## Promises and async/await
+## Promises e async/await
 
-Most of the methods provided by Sequelize are asynchronous and therefore return Promises. They are all [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) , so you can use the Promise API (for example, using `then`, `catch`, `finally`) out of the box.
+A maioria dos métodos fornecidos pelo Sequelize são assíncronos e, por causa disso, retornam Promises. São todos [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) , então você pode usar a Promise API (por exemplo, usando `then`, `catch`, `finally`) sem necessidade de qualquer outra configuração.
 
-Of course, using `async` and `await` works normally as well.
+E é claro que, ao usar `async` e `await`, isso também funciona da maneira esperada.
