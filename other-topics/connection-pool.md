@@ -1,4 +1,4 @@
-# Connection Pool
+# Conjunto de conexões
 
 Se você está conectando ao banco de dados por apenas uma etapa, você deveria criar apenas uma instância do Sequelize. o Sequelize irá configurar um conjunto de conexões ao inicializar. Esse conjunto de conexões pode ser configurado através do parametro de opções do construtor (usando  `options.pool`), como mostrado no exemplo abaixo:
 
