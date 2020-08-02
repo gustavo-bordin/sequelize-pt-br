@@ -9,7 +9,7 @@ O Sequelize está disponível via npm [npm](https://www.npmjs.com/package/sequel
 ```sh
 npm install --save sequelize
 ```
-Você tabém precisará fazer manualmente a instalação do driver para o banco de dados de sua escolha:
+Você também precisará fazer manualmente a instalação do driver para o banco de dados de sua escolha:
 
 ```sh
 # Uma das opções abaixo:
