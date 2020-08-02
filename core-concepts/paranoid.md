@@ -1,29 +1,29 @@
 # Paranoid
 
-Sequelize supports the concept of *paranoid* tables. A *paranoid* table is one that, when told to delete a record, it will not truly delete it. Instead, a special column called `deletedAt` will have its value set to the timestamp of that deletion request.
+Sequelize suporta o conceito de tabelas *paranoid*. Uma tabela *paranoid* é aquela que, quando dito para deletar um registro, ela não o deleta de verdade. Em vez disso, uma coluna especial chamada de `deletedAt` receberá o valor do momento em que a requisição da deleção foi feita.
 
-This means that paranoid tables perform a *soft-deletion* of records, instead of a *hard-deletion*.
+Isso significa que tabelas *paranoid* executam uma *deleção suave* dos registros, ao invés de uma *deleção bruta*
 
-## Defining a model as paranoid
+## Definindo um modelo como paranoid
 
-To make a model paranoid, you must pass the `paranoid: true` option to the model definition. Paranoid requires timestamps to work (i.e. it won't work if you also pass `timestamps: false`).
+Para dizer que um modelo é paranoid, você deve passar a opção `paranoid: true` para a definição. As tabelas paranoid precisam que a opção 'timestamps' esteja como 'true' (ou seja, não irá funcionar se você definir `timestamps: false`).
 
-You can also change the default column name (which is `deletedAt`) to something else.
+Você também pode alterar o nome padrão da coluna (que é `deletedAt`) para algum outro.
 
 ```js
 class Post extends Model {}
-Post.init({ /* attributes here */ }, {
+Post.init({ /* os atributos vão aqui */ }, {
   sequelize,
   paranoid: true,
 
-  // If you want to give a custom name to the deletedAt column
-  deletedAt: 'destroyTime'
+  // Se você quiser dar outro nome à coluna 'deletedAt'
+  deletedAt: 'momentoDestruido'
 });
 ```
 
-## Deleting
+## Deletando
 
-When you call the `destroy` method, a soft-deletion will happen:
+Quando você chama o método `destroy`, uma deleção-suave irá acontecer:
 
 ```js
 await Post.destroy({
@@ -34,7 +34,7 @@ await Post.destroy({
 // UPDATE "posts" SET "deletedAt"=[timestamp] WHERE "deletedAt" IS NULL AND "id" = 1
 ```
 
-If you really want a hard-deletion and your model is paranoid, you can force it using the `force: true` option:
+Se você realmente quiser uma deleção-bruta e seu modelo for paranoid, você pode forçar com a opção `force: true`
 
 ```js
 await Post.destroy({
@@ -46,31 +46,31 @@ await Post.destroy({
 // DELETE FROM "posts" WHERE "id" = 1
 ```
 
-The above examples used the static `destroy` method as an example (`Post.destroy`), but everything works in the same way with the instance method:
+Os exemplos acima usaram o método estático `destroy` , como (`Post.destroy`), porém, tudo funciona da mesma forma com as instâncias:
 
 ```js
-const post = await Post.create({ title: 'test' });
+const post = await Post.create({ titulo: 'teste' });
 console.log(post instanceof Post); // true
-await post.destroy(); // Would just set the `deletedAt` flag
-await post.destroy({ force: true }); // Would really delete the record
+await post.destroy(); // Apenas definiria a coluna 'deletedAt'
+await post.destroy({ force: true }); // Apagaria o registro de verdade
 ```
 
-## Restoring
+## Restaurando
 
-To restore soft-deleted records, you can use the `restore` method, which comes both in the static version as well as in the instance version:
+Para restaurar registros que sofreram uma deleção-suave, você pode usar o método `restore`, que funciona em ambas opções; no próprio modelo ou na instância do modelo:
 
 ```js
-// Example showing the instance `restore` method
-// We create a post, soft-delete it and then restore it back
-const post = await Post.create({ title: 'test' });
+// Exemplo mostrando o uso de 'restore' na instância
+// Criamos um post, executamos uma deleção-suave e então o restauramos
+const post = await Post.create({ titulo: 'teste' });
 console.log(post instanceof Post); // true
 await post.destroy();
-console.log('soft-deleted!');
+console.log('foi deletado suavemente');
 await post.restore();
-console.log('restored!');
+console.log('foi restaurado!');
 
-// Example showing the static `restore` method.
-// Restoring every soft-deleted post with more than 100 likes
+// Exemplo mostrando o método estático de 'restore', ou seja, no próprio modelo
+// Restaurando todos os registros suavemente deletados que tenham mais de 100 likes
 await Post.restore({
   where: {
     likes: {
@@ -80,26 +80,26 @@ await Post.restore({
 });
 ```
 
-## Behavior with other queries
+## Comportamento com outras queries
 
-Every query performed by Sequelize will automatically ignore soft-deleted records (except raw queries, of course).
+Toda query executada pelo Sequelize irá ignorar automaticamente os registros que foram deletados suavementes (exceto as queries cruas, é claro).
 
-This means that, for example, the `findAll` method will not see the soft-deleted records, fetching only the ones that were not deleted.
+Isso significa que, por exemplo, o método `findAll` não irá ver os registros deletados suavementes, buscando apenas aqueles que não foram deletados.
 
-Even if you simply call `findByPk` providing the primary key of a soft-deleted record, the result will be `null` as if that record didn't exist.
+Mesmo se você chamar `findByPk` passando a chave primária de um registro que foi deletado suavamente, o resultado será `null`, como se aquele registro não existisse.
 
-If you really want to let the query see the soft-deleted records, you can pass the `paranoid: false` option to the query method. For example:
+Se você realmente quiser que as queries vejam os registros deletados suavemente, você pode passar a opção `paranoid: false` para o método da query. Por exemplo:
 
 ```js
-await Post.findByPk(123); // This will return `null` if the record of id 123 is soft-deleted
-await Post.findByPk(123, { paranoid: false }); // This will retrieve the record
+await Post.findByPk(123); // Isso retornará 'null' se o registro de 123 foi deletado suavemente
+await Post.findByPk(123, { paranoid: false }); // Isso retornará o registro
 
 await Post.findAll({
   where: { foo: 'bar' }
-}); // This will not retrieve soft-deleted records
+}); // Isso não retornará registros deletados suavemente
 
 await Post.findAll({
   where: { foo: 'bar' },
   paranoid: false
-}); // This will also retrieve soft-deleted records
+}); // Isso retornará registros deletados suavemente
 ```
