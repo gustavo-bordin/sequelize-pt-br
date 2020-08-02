@@ -1,6 +1,6 @@
 # Connection Pool
 
-If you're connecting to the database from a single process, you should create only one Sequelize instance. Sequelize will set up a connection pool on initialization. This connection pool can be configured through the constructor's `options` parameter (using `options.pool`), as is shown in the following example:
+Se você está conectando ao banco de dados por apenas uma etapa, você deveria criar apenas uma instância do Sequelize. o Sequelize irá configurar um conjunto de conexões ao inicializar. Esse conjunto de conexões pode ser configurado através do parametro de opções do construtor (usando  `options.pool`), como mostrado no exemplo abaixo:
 
 ```js
 const sequelize = new Sequelize(/* ... */, {
@@ -14,4 +14,4 @@ const sequelize = new Sequelize(/* ... */, {
 });
 ```
 
-Learn more in the [API Reference for the Sequelize constructor](../class/lib/sequelize.js~Sequelize.html#instance-constructor-constructor). If you're connecting to the database from multiple processes, you'll have to create one instance per process, but each instance should have a maximum connection pool size of such that the total maximum size is respected. For example, if you want a max connection pool size of 90 and you have three processes, the Sequelize instance of each process should have a max connection pool size of 30.
+Veja mais na [Referência da API para o construtor do Sequelize](../class/lib/sequelize.js~Sequelize.html#instance-constructor-constructor). Se você está se conectando ao banco de dados por várias processos, você terá que criar uma instância para cada processo, porém cada instância deve ter limite para o conjunto de conexões, de forma que o tamanho máximo total seja respeitado. Por exemplo, Se você quiser um limite de 90 e você tem 3 processos, a instância do Sequelize para cada processo deve ter um limite para o conjunto de conexões de 30.
