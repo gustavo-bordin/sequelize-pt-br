@@ -1,17 +1,18 @@
 # Getters, Setters & Virtuals
 
-Sequelize allows you to define custom getters and setters for the attributes of your models.
+Sequelize permite você definir getters e setters customizados para os atributos dos seus models.
 
-Sequelize also allows you to specify the so-called *virtual attributes*, which are attributes on the Sequelize Model that doesn't really exist in the underlying SQL table, but instead are populated automatically by Sequelize. They are very useful for simplifying code, for example.
+Sequelize também permite você especificar os assim chamados *atributos virtuais*, no qual são os atributos no Sequelize Model que não realmente existe na tabela SQL subjacente, mas, ao invés, são populadas automaticamente pelo Sequelize. Eles são muito úteis para simplificar o código, por exemplo.
 
 ## Getters
 
-A getter is a `get()` function defined for one column in the model definition:
+Um getter é uma função `get()` definida para uma coluna na definição do model.
 
 ```js
 const User = sequelize.define('user', {
-  // Let's say we wanted to see every username in uppercase, even
-  // though they are not necessarily uppercase in the database itself
+
+  // Vamos dizer que nós queremos ver todo username em maiúsculo, embora
+  // não sejam maiúsculos no próprio bando de dados
   username: {
     type: DataTypes.STRING,
     get() {
@@ -22,7 +23,7 @@ const User = sequelize.define('user', {
 });
 ```
 
-This getter, just like a standard JavaScript getter, is called automatically when the field value is read:
+Esse getter, apenas como um getter padrão do Javascript, é chamado automaticamente quando o valor do campo é lido.
 
 ```js
 const user = User.build({ username: 'SuperUser123' });
@@ -30,13 +31,13 @@ console.log(user.username); // 'SUPERUSER123'
 console.log(user.getDataValue(username)); // 'SuperUser123'
 ```
 
-Note that, although `SUPERUSER123` was logged above, the value truly stored in the database is still `SuperUser123`. We used `this.getDataValue(username)` to obtain this value, and converted it to uppercase.
+Note que, embora `SUPERUSER123` foi registrado acima, o valor verdadeiro armazenado no banco de dados ainda é `SuperUser123`. Usamos `this.getDataValue(username)` para obter esse valor, e o convertemos para maiúsculas.
 
-Had we tried to use `this.username` in the getter instead, we would have gotten an infinite loop! This is why Sequelize provides the `getDataValue` method.
+Se tivéssemos tentado user `this.username` no getter ao invés, teríamos um loop inifinito! Isso é porque Sequelize providencia o método `getDataValue`.
 
 ## Setters
 
-A setter is a `set()` function defined for one column in the model definition. It receives the value being set:
+Um setter é uma função `set()` definada para uma coluna na definição do model. Ele recebe um valor que está sendo definido:
 
 ```js
 const User = sequelize.define('user', {
@@ -44,8 +45,9 @@ const User = sequelize.define('user', {
   password: {
     type: DataTypes.STRING,
     set(value) {
-      // Storing passwords in plaintext in the database is terrible.
-      // Hashing the value with an appropriate cryptographic hash function is better.
+
+      // Armazenar senhas em texto puro no banco de dados é terrível.
+      // Hashear o valor com uma apropriada função de hash criptográfica é melhor.
       this.setDataValue('password', hash(value));
     }
   }
@@ -58,9 +60,9 @@ console.log(user.password); // '7cfc84b8ea898bb72462e78b4643cfccd77e9f05678ec2ce
 console.log(user.getDataValue(password)); // '7cfc84b8ea898bb72462e78b4643cfccd77e9f05678ec2ce78754147ba947acc'
 ```
 
-Observe that Sequelize called the setter automatically, before even sending data to the database. The only data the database ever saw was the already hashed value.
+Observe que o Sequelize chamou o setter automaticamente, antes mesmo de enviar os dados para o banco de dados. O único dado que o banco de dados viu foi o valor já hasheado.
 
-If we wanted to involve another field from our model instance in the computation, that is possible and very easy!
+Se nós quisermos envolver um outro campo da nossa instância do model na computação, isso é possível e muito fácil!
 
 ```js
 const User = sequelize.define('user', {
@@ -68,24 +70,26 @@ const User = sequelize.define('user', {
   password: {
     type: DataTypes.STRING,
     set(value) {
-      // Storing passwords in plaintext in the database is terrible.
-      // Hashing the value with an appropriate cryptographic hash function is better.
-      // Using the username as a salt is better.
+
+      // Armazenar senhas em texto puro no banco de dados é terrível.
+      // Hashear o valor com uma apropriada função de hash criptográfica é melhor.
+      // Usar o username como um salt é melhor.
+      
       this.setDataValue('password', hash(this.username + value));
     }
   }
 });
 ```
 
-**Note:** The above examples involving password handling, although much better than simply storing the password in plaintext, are far from perfect security. Handling passwords properly is hard, everything here is just for the sake of an example to show Sequelize functionality. We suggest involving a cybersecurity expert and/or reading [OWASP](https://www.owasp.org/) documents and/or visiting the [InfoSec StackExchange](https://security.stackexchange.com/).
+**Nota:** Os exemplos acima envolvendo gerenciamento de senhas, embora muito melhor do que simplesmente armazenar a senha em texto puro, estão longe de ser a segurança perfeita. Gerenciar senhas apropriadamente é difícil, tudo aqui é apenas para um exemplo para mostrar funcionalidades do Sequelize. Sugerimos a participação de um especialista em segurança cibernética e/ou ler os documentos de [OWASP](https://www.owasp.org/) e/ou visitar o [InfoSec StackExchange](https://security.stackexchange.com/).
 
-## Combining getters and setters
+## Combinando getters e setters
 
-Getters and setters can be both defined in the same field.
+Getters e setters pode ser ambos definidos no mesmo campo.
 
-For the sake of an example, let's say we are modeling a `Post`, whose `content` is a text of unlimited length. To improve memory usage, let's say we want to store a gzipped version of the content.
+Para um exemplo, vamos dizer que nós estamos modelando um `Post`, cujo `content` é um texto de tamanho ilimitado. Para melhorar o uso de memória, vamos dizer que nós queremos armazenar uma versão gzipped do conteúdo.
 
-*Note: modern databases should do some compression automatically in these cases. Please note that this is just for the sake of an example.*
+*Nota: Banco de dados modernos devem fazer alguma compressão automaticamente nesses casos. Por favor, note que isso é apenas para um exemplo.*
 
 ```js
 const { gzipSync, gunzipSync } = require('zlib');
@@ -107,29 +111,31 @@ const Post = sequelize.define('post', {
 });
 ```
 
-With the above setup, whenever we try to interact with the `content` field of our `Post` model, Sequelize will automatically handle the custom getter and setter. For example:
+Com a configuração acima, sempre que nós tentarmos interagir com o campo `content` do nosso model `Post`, Sequelize vai automaticamente gerenciar o getter e setter personalizados. Por exemplo:
 
 ```js
 const post = await Post.create({ content: 'Hello everyone!' });
 
 console.log(post.content); // 'Hello everyone!'
-// Everything is happening under the hood, so we can even forget that the
-// content is actually being stored as a gzipped base64 string!
 
-// However, if we are really curious, we can get the 'raw' data...
+// Tudo está acontecendo embaixo do capô, então nós podemos até esquecer que o
+// content está na verdade sendo armazenado como um gzipped base64 string!
+
+// No entanto, se nós somos realmente curiosos, podemos pegar o dado 'cru'...
 console.log(post.getDataValue('content'));
-// Output: 'H4sIAAAAAAAACvNIzcnJV0gtSy2qzM9LVQQAUuk9jQ8AAAA='
+// Saída: 'H4sIAAAAAAAACvNIzcnJV0gtSy2qzM9LVQQAUuk9jQ8AAAA='
 ```
 
-## Virtual fields
+## Campos virtuais
 
-Virtual fields are fields that Sequelize populates under the hood, but in reality they don't even exist in the database.
+Campos virtuais são campos que o Sequelize preenche embaixo do capô, mas na
+realidade eles nem mesmo existem no banco de dados.
 
-For example, let's say we have the `firstName` and `lastName` attributes for a User.
+Por exemplo, vamos dizer que nós temos os atributos `firstName` e `lastName` para um User.
 
-*Again, this is [only for the sake of an example](https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/).*
+*De novo, isso é [somente um exemplo](https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/)* 
 
-It would be nice to have a simple way to obtain the *full name* directly! We can combine the idea of `getters` with the special data type Sequelize provides for this kind of situation: `DataTypes.VIRTUAL`:
+Seria bom de ter uma maneira simples para obter o *full name* diretamente! Nós podemos combinar a ideia de `getters` com tipo de dado especial que Sequelize providencia para esse tipo de situação: `DataTypes.VIRTUAL`:
 
 ```js
 const { DataTypes } = require("sequelize");
@@ -149,18 +155,18 @@ const User = sequelize.define('user', {
 });
 ```
 
-The `VIRTUAL` field does not cause a column in the table to exist. In other words, the model above will not have a `fullName` column. However, it will appear to have it!
+O campo `VIRTUAL` não causa uma coluna na tabela existir. Em outras palavras, o model acima não vai ter uma coluna `fullName`. No entanto, vai parecer ter uma!
 
 ```js
 const user = await User.create({ firstName: 'John', lastName: 'Doe' });
 console.log(user.fullName); // 'John Doe'
 ```
 
-## `getterMethods` and `setterMethods`
+## `getterMethods` e `setterMethods`
 
-Sequelize also provides the `getterMethods` and `setterMethods` options in the model definition to specify things that look like, but aren't exactly the same as, virtual attributes. This usage is discouraged and likely to be deprecated in the future (in favor of using virtual attributes directly).
+Sequelize também providencia as opções `getterMethods` e `setterMethods` na definição do model para especificar coisas que se parecem, mas não são exatamente iguais aos atributos virtuais.
 
-Example:
+Exemplo:
 
 ```js
 const { Sequelize, DataTypes } = require('sequelize');
@@ -177,8 +183,9 @@ const User = sequelize.define('user', {
   },
   setterMethods: {
     fullName(value) {
-      // Note: this is just for demonstration.
-      // See: https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/
+
+      // Nota: Isso é apenas para demonstração
+      // Veja: https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/
       const names = value.split(' ');
       const firstName = names[0];
       const lastName = names.slice(1).join(' ');
