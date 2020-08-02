@@ -34,7 +34,7 @@ _____
 │       validations-and-constraints.md
 |
 └───other-topics
-        connection-pool.md
+        connection-pool.md ✔️               [gustavobordinho]
         constraints-and-circularities.md
         dialect-specific-things.md
         extending-data-types.md
