@@ -37,7 +37,7 @@ Se em vez disso tivéssemos tentado usar `this.nomeUsuario` no getter, teríamos
 
 ## Setters
 
-Um setter é uma função `set()` definida para uma coluna na definição do modelo. Ele recebe um valor que está sendo definido:
+Um setter é uma função `set()` definida para uma coluna na definição do modelo. Ele recebe um valor que está sendo atribuido:
 
 ```js
 const Usuario = sequelize.define('usuario', {
