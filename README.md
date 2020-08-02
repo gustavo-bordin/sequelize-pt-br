@@ -29,7 +29,7 @@ _____
 │       model-instances.md
 │       model-querying-basics.md
 │       model-querying-finders.md
-│       paranoid.md
+│       paranoid.md ✔️                      [gustavobordinho]
 │       raw-queries.md
 │       validations-and-constraints.md
 |
