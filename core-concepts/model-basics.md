@@ -10,7 +10,7 @@ O modelo fala ao Sequelize várias coisas sobre a entidade que ele representa, t
 
 Um modelo no Sequelize tem um nome. Esse nome não tem de ser o mesmo da tabela que ele representa no banco de dados. Geralmente, modelos tem nomes no singular (tal como `User`) enquanto tabelas tem nomes no plural (tal como `Users`), embora isso seja completamente configurável.
 
-## Definição de uma Model
+## Definição de uma Modelo
 
 Modelos podem ser definidas em duas maneiras equivalentes em Sequelize:
 
