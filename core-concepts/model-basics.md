@@ -43,7 +43,7 @@ const User = sequelize.define('User', {
   // Outras opções do modelo vão aqui
 });
 
-// `sequelize.define` também returna o model
+// `sequelize.define` também returna o modelo
 console.log(User === sequelize.models.User); // true
 ```
 
@@ -68,7 +68,7 @@ User.init({
 }, {
   // Outras opções do modelo vão aqui
   sequelize, // Precisamos passar a instância da conexão
-  modelName: 'User' // Precisamos escolher o nome do model
+  modelName: 'User' // Precisamos escolher o nome do modelo
 });
 
 // O modelo definido é a classe em si
@@ -85,9 +85,9 @@ Por padrão, quando o nome da tabela não é dado, Sequelize automaticamente plu
 
 Claro, esse comportamente é facilmente configurável.
 
-### Forçando o nome da tabela para ser igual ao nome do model
+### Forçando o nome da tabela para ser igual ao nome do modelo
 
-Você pode pausar a auto-pluralização performada pelo Sequelize usando a opção `freezeTableName: true`. Dessa maneira, Sequelize vai inferir o nome da tabela para ser equal ao nome do model, sem qualquer modificações:
+Você pode pausar a auto-pluralização performada pelo Sequelize usando a opção `freezeTableName: true`. Dessa maneira, Sequelize vai inferir o nome da tabela para ser equal ao nome do modelo, sem qualquer modificações:
 
 ```js
 sequelize.define('User', {
@@ -109,7 +109,7 @@ const sequelize = new Sequelize('sqlite::memory:', {
 });
 ```
 
-Dessa maneira, todas as tabelas vão usar o mesmo nome como o nome do model.
+Dessa maneira, todas as tabelas vão usar o mesmo nome como o nome do modelo.
 
 ### Providenciando o nome da tabela diretamente
 
@@ -123,15 +123,15 @@ sequelize.define('User', {
 });
 ```
 
-## Sincronização do model
+## Sincronização do modelo
 
-Quando você define um model, você está dizendo ao Sequelize algumas coisas sobre sua tabela no banco de dados. No entanto, e se a tabela na verdade nem existir no banco de dados? E se existe, mas tem diferentes colunas, menos colunas, ou qualquer outra diferença?
+Quando você define um modelo, você está dizendo ao Sequelize algumas coisas sobre sua tabela no banco de dados. No entanto, e se a tabela na verdade nem existir no banco de dados? E se existe, mas tem diferentes colunas, menos colunas, ou qualquer outra diferença?
 
 Isso é onde a sincronização do modelo entra. Um modelo pode ser sincronizado com o banco de dados chamando [`model.sync(options)`](https://sequelize.org/master/class/lib/model.js~Model.html#static-method-sync), uma função assíncrona (que retorna uma Promise). Com essa chamada, Sequelize vai automaticamente performar uma SQL query ao banco de dados. Note que isso altera somente a tabela no banco de dados, não o modelo no lado do Javascript.
 
 * `User.sync()` - Cria a tabela se ela não existe (e não faz nada se já existe)
 * `User.sync({ force: true })` - Cria a tabela, dropando ela primeiro se já existir
-* `User.sync({ alter: true })` - Verifica qual é o atual estado da tabela no banco de dados (quais colunas ela tem, quais são seus tipos de dados, etc), e então performa as mudanças necessárias no tabela para fazer corresponder o model.
+* `User.sync({ alter: true })` - Verifica qual é o atual estado da tabela no banco de dados (quais colunas ela tem, quais são seus tipos de dados, etc), e então performa as mudanças necessárias no tabela para fazer corresponder o modelo.
 
 Exemplo:
 
@@ -151,7 +151,7 @@ console.log("Todos os modelos foram sincronizados com sucesso.");
 
 ### Dropando tabelas
 
-Para dropar a tabela relacionada ao model:
+Para dropar a tabela relacionada ao modelo:
 
 ```js
 await User.drop();
@@ -180,7 +180,7 @@ Como mostrado acima, `sync({ force: true })` e `sync({ alter: true })` podem ser
 
 ## Timestamps
 
-Por padrão, Sequelize automaticamente adiciona os campos `createdAt` e `updatedAt` à todo model, usando o tipo de dado `DataTypes.DATE`. Esses campos são automaticamente gerenciados também - sempre que você usar Sequelize para criar ou atualizar alguma coisa, esses campos vão ser definidos corretamente. O campo `createdAt` vai conter a representação do timestamp no momento da criação, e o `updatedAt` vai conter o timestamp da última atualização.
+Por padrão, Sequelize automaticamente adiciona os campos `createdAt` e `updatedAt` à todo modelo, usando o tipo de dado `DataTypes.DATE`. Esses campos são automaticamente gerenciados também - sempre que você usar Sequelize para criar ou atualizar alguma coisa, esses campos vão ser definidos corretamente. O campo `createdAt` vai conter a representação do timestamp no momento da criação, e o `updatedAt` vai conter o timestamp da última atualização.
 
 **Nota:** Isso é feito no Sequelize (ex: não é feito com *SQL triggers*).Isso significa que queries SQL direta (por exemplo queries performadas sem Sequelize, por qualquer outro meio), não vai atualizar esses campos automaticamente.
 
@@ -379,7 +379,7 @@ Foo.init({
     type: DataTypes.INTEGER,
 
     references: {
-      // Essa é uma referência à um outro model
+      // Essa é uma referência à um outro modelo
       model: Bar,
 
       // Esse é o nome da coluna do modelo referenciado
@@ -405,7 +405,7 @@ Foo.init({
   sequelize,
   modelName: 'foo',
 
-  // Usando `unique: true` em um atributo acima é exatamente o mesmo como criar um índice nas opções do model:
+  // Usando `unique: true` em um atributo acima é exatamente o mesmo como criar um índice nas opções do modelo:
   indexes: [{ unique: true, fields: ['someUnique'] }]
 });
 ```
