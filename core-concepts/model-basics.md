@@ -12,7 +12,7 @@ Um modelo no Sequelize tem um nome. Esse nome não tem de ser o mesmo da tabela 
 
 ## Definição de uma Modelo
 
-Modelos podem ser definidas em duas maneiras equivalentes em Sequelize:
+Modelos podem ser definidos em duas maneiras equivalentes em Sequelize:
 
 * Chamando [`sequelize.define(modelName, attributes, options)`](../class/lib/sequelize.js~Sequelize.html#instance-method-define)
 * Extendendo [Model](../class/lib/model.js~Model.html) and calling [`init(attributes, options)`](../class/lib/model.js~Model.html#static-method-init)
