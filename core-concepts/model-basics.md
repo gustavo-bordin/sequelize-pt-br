@@ -1,53 +1,53 @@
-# Model Basics
+# Noções básicas de Model
 
-In this tutorial you will learn what models are in Sequelize and how to use them.
+Nesse tutorial você vai aprender o que são models no Sequelize e como usar eles.
 
-## Concept
+## Conceito
 
-Models are the essence of Sequelize. A model is an abstraction that represents a table in your database. In Sequelize, it is a class that extends [Model](../class/lib/model.js~Model.html).
+Models são a essência do Sequelize. Um model é uma abstração que representa uma tabela em seu banco de dados. No Sequelize, é uma classe que extende [Model](../class/lib/model.js~Model.html).
 
-The model tells Sequelize several things about the entity it represents, such as the name of the table in the database and which columns it has (and their data types).
+O model fala ao Sequelize várias coisas sobre a entidade que ele representa, tal como o nome da tabela no banco de dados e quais colunas ele tem (e seus tipos de dados).
 
-A model in Sequelize has a name. This name does not have to be the same name of the table it represents in the database. Usually, models have singular names (such as `User`) while tables have pluralized names (such as `Users`), although this is fully configurable.
+Um model no Sequelize tem um nome. Esse nome não tem de ser o mesmo da tabela que ele representa no banco de dados. Geralmente, models tem nomes no singular (tal como `User`) enquanto tabelas tem nomes no plural (tal como `Users`), embora isso seja completamente configurável.
 
-## Model Definition
+## Definição de uma Model
 
-Models can be defined in two equivalent ways in Sequelize:
+Models podem ser definidas em duas maneiras equivalentes em Sequelize:
 
-* Calling [`sequelize.define(modelName, attributes, options)`](../class/lib/sequelize.js~Sequelize.html#instance-method-define)
-* Extending [Model](../class/lib/model.js~Model.html) and calling [`init(attributes, options)`](../class/lib/model.js~Model.html#static-method-init)
+* Chamando [`sequelize.define(modelName, attributes, options)`](../class/lib/sequelize.js~Sequelize.html#instance-method-define)
+* Extendendo [Model](../class/lib/model.js~Model.html) and calling [`init(attributes, options)`](../class/lib/model.js~Model.html#static-method-init)
 
-After a model is defined, it is available within `sequelize.models` by its model name.
+Depois de um model estar definido, ele está disponível dentro de `sequelize.models` pelo seu nome.
 
-To learn with an example, we will consider that we want to create a model to represent users, which have a `firstName` and a `lastName`. We want our model to be called `User`, and the table it represents is called `Users` in the database.
+Para aprender com um exemplo, vamos considerar que queremos criar um model para representar users, no qual tem um `firstName` e um `lastName`. Queremos que nosso model seja chamado `User`, e a tabela que ele representa é chamada `Users` no banco de dados.
 
-Both ways to define this model are shown below. After being defined, we can access our model with `sequelize.models.User`.
+Ambas maneiras para definir esse model são mostradas abaixo. Depois de ser definido, podemos acessar nosso model com `sequelize.models.User`.
 
-### Using [`sequelize.define`](../class/lib/sequelize.js~Sequelize.html#instance-method-define):
+### Usando [`sequelize.define`](../class/lib/sequelize.js~Sequelize.html#instance-method-define):
 
 ```js
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
 const User = sequelize.define('User', {
-  // Model attributes are defined here
+  // Atributos do model são definidos aqui
   firstName: {
     type: DataTypes.STRING,
     allowNull: false
   },
   lastName: {
     type: DataTypes.STRING
-    // allowNull defaults to true
+    // allowNull true por padrão
   }
 }, {
-  // Other model options go here
+  // Outras opções do model vão aqui
 });
 
-// `sequelize.define` also returns the model
+// `sequelize.define` também returna o model
 console.log(User === sequelize.models.User); // true
 ```
 
-### Extending [Model](../class/lib/model.js~Model.html)
+### Extendendo [Model](../class/lib/model.js~Model.html)
 
 ```js
 const { Sequelize, DataTypes, Model } = require('sequelize');
@@ -56,50 +56,50 @@ const sequelize = new Sequelize('sqlite::memory');
 class User extends Model {}
 
 User.init({
-  // Model attributes are defined here
+  // Atributos do model são definidos aqui
   firstName: {
     type: DataTypes.STRING,
     allowNull: false
   },
   lastName: {
     type: DataTypes.STRING
-    // allowNull defaults to true
+    // allowNull true por padrão
   }
 }, {
-  // Other model options go here
-  sequelize, // We need to pass the connection instance
-  modelName: 'User' // We need to choose the model name
+  // Outras opções do model vão aqui
+  sequelize, // Precisamos passar a instância da conexão
+  modelName: 'User' // Precisamos escolher o nome do model
 });
 
-// the defined model is the class itself
+// O model definido é a classe em si
 console.log(User === sequelize.models.User); // true
 ```
 
-Internally, `sequelize.define` calls `Model.init`, so both approaches are essentially equivalent.
+Internamente, `sequelize.define` chama `Model.init`, então ambas abordagens são essencialmente equivalentes.
 
-## Table name inference
+## Inferência do nome da tabela
 
-Observe that, in both methods above, the table name (`Users`) was never explicitly defined. However, the model name was given (`User`).
+Observe que, em ambos os métodos acima, o nome da tabela (`Users`) nunca foi explicitamente definido. No entanto, o nome dado ao model foi (`User`).
 
-By default, when the table name is not given, Sequelize automatically pluralizes the model name and uses that as the table name. This pluralization is done under the hood by a library called [inflection](https://www.npmjs.com/package/inflection), so that irregular plurals (such as `person -> people`) are computed correctly.
+Por padrão, quando o nome da tabela não é dado, Sequelize automaticamente pluraliza o nome do model e usa como o nome da tabela. Essa pluralização é feita embaixo do capô por uma library chamada [inflection](https://www.npmjs.com/package/inflection), assim plurais irregulares (tal como `person -> people`) são computados corretamente.
 
-Of course, this behavior is easily configurable.
+Claro, esse comportamente é facilmente configurável.
 
-### Enforcing the table name to be equal to the model name
+### Forçando o nome da tabela para ser igual ao nome do model
 
-You can stop the auto-pluralization performed by Sequelize using the `freezeTableName: true` option. This way, Sequelize will infer the table name to be equal to the model name, without any modifications:
+Você pode pausar a auto-pluralização performada pelo Sequelize usando a opção `freezeTableName: true`. Dessa maneira, Sequelize vai inferir o nome da tabela para ser equal ao nome do model, sem qualquer modificações:
 
 ```js
 sequelize.define('User', {
-  // ... (attributes)
+  // ... (atributos)
 }, {
   freezeTableName: true
 });
 ```
 
-The example above will create a model named `User` pointing to a table also named `User`.
+O exemplo acima vai criar um model chamado `User` apontando para uma tabela também chamada `User`:
 
-This behavior can also be defined globally for the sequelize instance, when it is created:
+Esse comportamente pode também ser definido globalmente para a instância do sequelize, quando ele é criado:
 
 ```js
 const sequelize = new Sequelize('sqlite::memory:', {
@@ -109,128 +109,128 @@ const sequelize = new Sequelize('sqlite::memory:', {
 });
 ```
 
-This way, all tables will use the same name as the model name.
+Dessa maneira, todas as tabelas vão usar o mesmo nome como o nome do model.
 
-### Providing the table name directly
+### Providenciando o nome da tabela diretamente
 
-You can simply tell Sequelize the name of the table directly as well:
+Você pode simplesmente dizer ao Sequelize o nome da tabela diretamente também:
 
 ```js
 sequelize.define('User', {
-  // ... (attributes)
+  // ... (atributos)
 }, {
   tableName: 'Employees'
 });
 ```
 
-## Model synchronization
+## Sincronização do model
 
-When you define a model, you're telling Sequelize a few things about its table in the database. However, what if the table actually doesn't even exist in the database? What if it exists, but it has different columns, less columns, or any other difference?
+Quando você define um model, você está dizendo ao Sequelize algumas coisas sobre sua tabela no banco de dados. No entanto, e se a tabela na verdade nem existir no banco de dados? E se existe, mas tem diferentes colunas, menos colunas, ou qualquer outra diferença?
 
-This is where model synchronization comes in. A model can be synchronized with the database by calling [`model.sync(options)`](https://sequelize.org/master/class/lib/model.js~Model.html#static-method-sync), an asynchronous function (that returns a Promise). With this call, Sequelize will automatically perform an SQL query to the database. Note that this changes only the table in the database, not the model in the JavaScript side.
+Isso é onde a sincronização do model entra. Um model pode ser sincronizado com o banco de dados chamando [`model.sync(options)`](https://sequelize.org/master/class/lib/model.js~Model.html#static-method-sync), uma função assíncrona (que retorna uma Promise). Com essa chamada, Sequelize vai automaticamente performar uma SQL query ao banco de dados. Note que isso altera somente a tabela no banco de dados, não o model no lado do Javascript.
 
-* `User.sync()` - This creates the table if it doesn't exist (and does nothing if it already exists)
-* `User.sync({ force: true })` - This creates the table, dropping it first if it already existed
-* `User.sync({ alter: true })` - This checks what is the current state of the table in the database (which columns it has, what are their data types, etc), and then performs the necessary changes in the table to make it match the model.
+* `User.sync()` - Cria a tabela se ela não existe (e não faz nada se já existe)
+* `User.sync({ force: true })` - Cria a tabela, dropando ela primeiro se já existir
+* `User.sync({ alter: true })` - Verifica qual é o atual estado da tabela no banco de dados (quais colunas ela tem, quais são seus tipos de dados, etc), e então performa as mudanças necessárias no tabela para fazer corresponder o model.
 
-Example:
+Exemplo:
 
 ```js
 await User.sync({ force: true });
-console.log("The table for the User model was just (re)created!");
+console.log("A tabela para o model User foi (re)criada!");
 ```
 
-### Synchronizing all models at once
+### Sincronizando todos os models de uma vez
 
-You can use [`sequelize.sync()`](../class/lib/sequelize.js~Sequelize.html#instance-method-sync) to automatically synchronize all models. Example:
+Você pode usar [`sequelize.sync()`](../class/lib/sequelize.js~Sequelize.html#instance-method-sync) para automaticamente sincronizar todos os models. Exemplo:
 
 ```js
 await sequelize.sync({ force: true });
-console.log("All models were synchronized successfully.");
+console.log("Todos os models foram sincronizados com sucesso.");
 ```
 
-### Dropping tables
+### Dropando tabelas
 
-To drop the table related to a model:
+Para dropar a tabela relacionada ao model:
 
 ```js
 await User.drop();
-console.log("User table dropped!");
+console.log("Tabela User foi dropada!");
 ```
 
-To drop all tables:
+Para dropar todas as tabelas:
 
 ```js
 await sequelize.drop();
-console.log("All tables dropped!");
+console.log("Todas tabelas dropadas!");
 ```
 
-### Database safety check
+### Verificação de segurança do banco de dados
 
-As shown above, the `sync` and `drop` operations are destructive. Sequelize acceps a `match` option as an additional safety check, which receives a RegExp:
+Como mostrado acima, as operações `sync` e `drop` são destrutivas. Sequelize aceita uma opção `match` como um verificação de segurança adicional, no qual recebe um RegExp:
 
 ```js
-// This will run .sync() only if database name ends with '_test'
+// Isso vai executar .sync() somente se o nome do banco de dados termina com '_test'
 sequelize.sync({ force: true, match: /_test$/ });
 ```
 
-### Synchronization in production
+### Sincronização em produção
 
-As shown above, `sync({ force: true })` and `sync({ alter: true })` can be destructive operations. Therefore, they are not recommended for production-level software. Instead, synchronization should be done with the advanced concept of [Migrations](migrations.html), with the help of the [Sequelize CLI](https://github.com/sequelize/cli).
+Como mostrado acima, `sync({ force: true })` e `sync({ alter: true })` podem ser operações destrutivas. Sendo assim, eles são não recomendados para software em nível de produção. Ao invés, sincronização deve ser feito com o conceito avançado de [Migrations](migrations.html), com a ajuda do [Sequelize CLI](https://github.com/sequelize/cli).
 
 ## Timestamps
 
-By default, Sequelize automatically adds the fields `createdAt` and `updatedAt` to every model, using the data type `DataTypes.DATE`. Those fields are automatically managed as well - whenever you use Sequelize to create or update something, those fields will be set correctly. The `createdAt` field will contain the timestamp representing the moment of creation, and the `updatedAt` will contain the timestamp of the latest update.
+Por padrão, Sequelize automaticamente adiciona os campos `createdAt` e `updatedAt` à todo model, usando o tipo de dado `DataTypes.DATE`. Esses campos são automaticamente gerenciados também - sempre que você usar Sequelize para criar ou atualizar alguma coisa, esses campos vão ser definidos corretamente. O campo `createdAt` vai conter a representação do timestamp no momento da criação, e o `updatedAt` vai conter o timestamp da última atualização.
 
-**Note:** This is done in the Sequelize level (i.e. not done with *SQL triggers*). This means that direct SQL queries (for example queries performed without Sequelize by any other means) will not cause these fields to be updated automatically.
+**Nota:** Isso é feito no Sequelize (ex: não é feito com *SQL triggers*).Isso significa que queries SQL direta (por exemplo queries performadas sem Sequelize, por qualquer outro meio), não vai atualizar esses campos automaticamente.
 
-This behavior can be disabled for a model with the `timestamps: false` option:
+Esse comportamente pode ser desativado por um model com a opção `timestamp: false`:
 
 ```js
 sequelize.define('User', {
-  // ... (attributes)
+  // ... (atributos)
 }, {
   timestamps: false
 });
 ```
 
-It is also possible to enable only one of `createdAt`/`updatedAt`, and to provide a custom name for these columns:
+É também possível ativar somente um dos `createdAt`/`updatedAt`, e providenciar um nome personalizado para essas colunas:
 
 ```js
 class Foo extends Model {}
-Foo.init({ /* attributes */ }, {
+Foo.init({ /* atributos */ }, {
   sequelize,
 
-  // don't forget to enable timestamps!
+  // Não esqueça de ativar o timestamps
   timestamps: true,
 
-  // I don't want createdAt
+  // Não quero createdAt
   createdAt: false,
 
-  // I want updatedAt to actually be called updateTimestamp
+  // Quero que updatedAt na verdade seja chamado updateTimestamp
   updatedAt: 'updateTimestamp'
 });
 ```
 
-## Column declaration shorthand syntax
+## Sintaxe abreviada de declaração da coluna
 
-If the only thing being specified about a column is its data type, the syntax can be shortened:
+Se a única coisa sendo especificada sobre uma coluna é o seu tipo de dado, a sintaxe pode ser abreviada:
 
 ```js
-// This:
+// Isso:
 sequelize.define('User', {
   name: {
     type: DataTypes.STRING
   }
 });
 
-// Can be simplified to:
+// Pode ser simplificado para:
 sequelize.define('User', { name: DataTypes.STRING });
 ```
 
-## Default Values
+## Valores padrões
 
-By default, Sequelize assumes that the default value of a column is `NULL`. This behavior can be changed by passing a specific `defaultValue` to the column definition:
+Por padrão, Sequelize assume que o valor padrão de uma coluna é `NULL`. Esse comportamente pode ser alterado ao passar um `defaultValue` específico para a definição da coluna:
 
 ```js
 sequelize.define('User', {
@@ -241,24 +241,24 @@ sequelize.define('User', {
 });
 ```
 
-Some special values, such as `Sequelize.NOW`, are also accepted:
+Alguns valores especiais, tal como `Sequelize.NOW`, são também aceitos:
 
 ```js
 sequelize.define('Foo', {
   bar: {
     type: DataTypes.DATETIME,
     defaultValue: Sequelize.NOW
-    // This way, the current date/time will be used to populate this column (at the moment of insertion)
+    // Dessa maneira, a atual data/hora vai ser usado para preencher essa coluna (no momento da inserção)
   }
 });
 ```
 
-## Data Types
+## Tipos de dados
 
-Every column you define in your model must have a data type. Sequelize provides [a lot of built-in data types](https://github.com/sequelize/sequelize/blob/master/lib/data-types.js). To access a built-in data type, you must import `DataTypes`:
+Toda coluna que você define em seu model deve ter um tipo de dado. Sequelize providencia [bastante tipos de dados built-in](https://github.com/sequelize/sequelize/blob/master/lib/data-types.js). Para acessar um tipo de dado built-in, você deve importar `DataTypes`:
 
 ```js
-const { DataTypes } = require("sequelize"); // Import the built-in data types
+const { DataTypes } = require("sequelize"); // Importa os tipos de dados built-in
 ```
 
 ### Strings
@@ -269,7 +269,7 @@ DataTypes.STRING(1234)       // VARCHAR(1234)
 DataTypes.STRING.BINARY      // VARCHAR BINARY
 DataTypes.TEXT               // TEXT
 DataTypes.TEXT('tiny')       // TINYTEXT
-DataTypes.CITEXT             // CITEXT          PostgreSQL and SQLite only.
+DataTypes.CITEXT             // CITEXT          PostgreSQL e SQLite somente.
 ```
 
 ### Boolean
@@ -289,9 +289,9 @@ DataTypes.FLOAT              // FLOAT
 DataTypes.FLOAT(11)          // FLOAT(11)
 DataTypes.FLOAT(11, 10)      // FLOAT(11,10)
 
-DataTypes.REAL               // REAL            PostgreSQL only.
-DataTypes.REAL(11)           // REAL(11)        PostgreSQL only.
-DataTypes.REAL(11, 12)       // REAL(11,12)     PostgreSQL only.
+DataTypes.REAL               // REAL            PostgreSQL somente.
+DataTypes.REAL(11)           // REAL(11)        PostgreSQL somente.
+DataTypes.REAL(11, 12)       // REAL(11,12)     PostgreSQL somente.
 
 DataTypes.DOUBLE             // DOUBLE
 DataTypes.DOUBLE(11)         // DOUBLE(11)
@@ -301,116 +301,118 @@ DataTypes.DECIMAL            // DECIMAL
 DataTypes.DECIMAL(10, 2)     // DECIMAL(10,2)
 ```
 
-#### Unsigned & Zerofill integers - MySQL/MariaDB only
+#### Inteiros não assinados & inteiros Zerofill - MySQL/MariaDB somente
 
-In MySQL and MariaDB, the data types `INTEGER`, `BIGINT`, `FLOAT` and `DOUBLE` can be set as unsigned or zerofill (or both), as follows:
+Em MySQL e MariaDB, os tipos de dados `INTEGER`, `BIGINT`, `FLOAT` e `DOUBLE` podem ser definidos como não assinados ou zerofill (ou ambos), como à seguir:
 
 ```js
 DataTypes.INTEGER.UNSIGNED
 DataTypes.INTEGER.ZEROFILL
 DataTypes.INTEGER.UNSIGNED.ZEROFILL
-// You can also specify the size i.e. INTEGER(10) instead of simply INTEGER
-// Same for BIGINT, FLOAT and DOUBLE
+// Você pode também especificar o tamanho, ex: INTEGER(10) ao invés de simplesmente INTEGER
+// O mesmo para BIGINT, FLOAT e DOUBLE
 ```
 
-### Dates
+### Datas
 
 ```js
-DataTypes.DATE       // DATETIME for mysql / sqlite, TIMESTAMP WITH TIME ZONE for postgres
-DataTypes.DATE(6)    // DATETIME(6) for mysql 5.6.4+. Fractional seconds support with up to 6 digits of precision
-DataTypes.DATEONLY   // DATE without time
+DataTypes.DATE       // DATETIME para mysql / sqlite, TIMESTAMP WITH TIME ZONE para postgres
+DataTypes.DATE(6)    // DATETIME(6) para mysql 5.6.4+. Segundos fracionários suportam até 6 dígitos de precisão
+DataTypes.DATEONLY   // DATE sem hora
 ```
 
 ### UUIDs
 
-For UUIDs, use `DataTypes.UUID`. It becomes the `UUID` data type for PostgreSQL and SQLite, and `CHAR(36)` for MySQL. Sequelize can generate UUIDs automatically for these fields, simply use `Sequelize.UUIDV1` or `Sequelize.UUIDV4` as the default value:
+Para UUIDs, use `DataTypes.UUID`. Ele torna o tipo de dado `UUID` para PostgreSQL e SQLite, e `CHAR(36)` para MySQL. Sequelize pode gerar UUIDs automaticamente para esses campos, simplesmente use `Sequelize.UUIDV1` or `Sequelize.UUIDV4` como valor padrão:
 
 ```js
 {
   type: DataTypes.UUID,
-  defaultValue: Sequelize.UUIDV4 // Or Sequelize.UUIDV1
+  defaultValue: Sequelize.UUIDV4 // Ou Sequelize.UUIDV1
 }
 ```
 
-### Others
+### Outros
 
-There are other data types, covered in a [separate guide](other-data-types.html).
+Há outros tipos de dados, cobridos em um [guia separado](other-data-types.html).
 
-## Column Options
+## Opções das colunas
 
-When defining a column, apart from specifying the `type` of the column, and the `allowNull` and `defaultValue` options mentioned above, there are a lot more options that can be used. Some examples are below.
+Quando definindo uma coluna, além de especificar o `type` da coluna, e as opções `allowNull` e `defaultValue` mencionadas acima, há muito mais opções que podem ser usadas. Alguns exemplos estão abaixo.
 
 ```js
 const { Model, DataTypes, Deferrable } = require("sequelize");
 
 class Foo extends Model {}
 Foo.init({
-  // instantiating will automatically set the flag to true if not set
+  // Instanciamento vai automaticamente atribuir a flag para true se não definido
   flag: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
 
-  // default values for dates => current time
+  // Valores padrões para datas => hora atual
   myDate: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
 
-  // setting allowNull to false will add NOT NULL to the column, which means an error will be
-  // thrown from the DB when the query is executed if the column is null. If you want to check that a value
-  // is not null before querying the DB, look at the validations section below.
+  // Definindo allowNull para false vai adicionar NOT NULL na coluna, no qual significa um erro vai ser
+  // lançado do DB quando a query é executada se a coluna é null. Se você quer checar que um valor
+  // não é null antes de consultar o DB, olhe na seção de validações abaixo.
   title: { type: DataTypes.STRING, allowNull: false },
 
-  // Creating two objects with the same value will throw an error. The unique property can be either a
-  // boolean, or a string. If you provide the same string for multiple columns, they will form a
-  // composite unique key.
+
+  // Criando dois objetos com o mesmo valor vai lançar um erro. A propriedade unica pode ser ou um boleano, ou uma string. Se você providenciar a mesma string para múltiplas colunas, eles vão formar uma chave única composta.
+  // 
   uniqueOne: { type: DataTypes.STRING,  unique: 'compositeIndex' },
   uniqueTwo: { type: DataTypes.INTEGER, unique: 'compositeIndex' },
 
-  // The unique property is simply a shorthand to create a unique constraint.
+  // A propriedade unique é simplesmente uma abreviação para criar uma restrição exclusiva.
   someUnique: { type: DataTypes.STRING, unique: true },
 
-  // Go on reading for further information about primary keys
+  // Continue lendo para mais informações sobre chaves primárias
   identifier: { type: DataTypes.STRING, primaryKey: true },
 
-  // autoIncrement can be used to create auto_incrementing integer columns
+  // autoIncrement pode ser usado para criar colunas do tipo inteiro para auto_incrementing
   incrementMe: { type: DataTypes.INTEGER, autoIncrement: true },
 
-  // You can specify a custom column name via the 'field' attribute:
+  // Você pode especificar um nome de coluna personalizado pelo atributo 'field':
   fieldWithUnderscores: { type: DataTypes.STRING, field: 'field_with_underscores' },
 
-  // It is possible to create foreign keys:
+  // É possível criar chaves estrangeiras:
   bar_id: {
     type: DataTypes.INTEGER,
 
     references: {
-      // This is a reference to another model
+      // Essa é uma referência à um outro model
       model: Bar,
 
-      // This is the column name of the referenced model
+      // Esse é o nome da coluna do model referenciado
       key: 'id',
 
-      // With PostgreSQL, it is optionally possible to declare when to check the foreign key constraint, passing the Deferrable type.
+      // Com PostgreSQL, é opcionalmente possível declarar quando verificar a restrição de chave estrangeira, passando o tipo Deferrable.
       deferrable: Deferrable.INITIALLY_IMMEDIATE
-      // Options:
-      // - `Deferrable.INITIALLY_IMMEDIATE` - Immediately check the foreign key constraints
-      // - `Deferrable.INITIALLY_DEFERRED` - Defer all foreign key constraint check to the end of a transaction
-      // - `Deferrable.NOT` - Don't defer the checks at all (default) - This won't allow you to dynamically change the rule in a transaction
+      
+      // Opções:
+      // - `Deferrable.INITIALLY_IMMEDIATE` - Imediatamente verifica a restrição de chave estrangeira
+      // - `Deferrable.INITIALLY_DEFERRED` - Retarda toda verificação de restrição de chave estrangeira para o final de uma transação
+      // - `Deferrable.NOT` - Não retarda a verificação (padrão) - Isso não vai permitir você dinamicamente mudar a regra em uma transação
+
     }
   },
 
-  // Comments can only be added to columns in MySQL, MariaDB, PostgreSQL and MSSQL
+  // Comentários podem somente ser adicionados às colunas em MySQL, MariaDB, PostgreSQL e MSSQL
   commentMe: {
     type: DataTypes.INTEGER,
-    comment: 'This is a column name that has a comment'
+    comment: 'Esse é um nome de coluna que tem um comentário'
   }
 }, {
   sequelize,
   modelName: 'foo',
 
-  // Using `unique: true` in an attribute above is exactly the same as creating the index in the model's options:
+  // Usando `unique: true` em um atributo acima é exatamente o mesmo como criar um índice nas opções do model:
   indexes: [{ unique: true, fields: ['someUnique'] }]
 });
 ```
 
-## Taking advantage of Models being classes
+## Tirando vantagem dos Models serem classes
 
-The Sequelize models are [ES6 classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes). You can very easily add custom instance or class level methods.
+Os models Sequelize são [ES6 classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes). Você pode muito facilmente adicionar instância personalizada ou métodos.
 
 ```js
 class User extends Model {
