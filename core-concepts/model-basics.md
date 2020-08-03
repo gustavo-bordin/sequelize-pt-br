@@ -375,7 +375,7 @@ Foo.init({
   fieldWithUnderscores: { type: DataTypes.STRING, field: 'field_with_underscores' },
 
   // É possível criar chaves estrangeiras:
-  bar_id: {
+  bar_id: { 
     type: DataTypes.INTEGER,
 
     references: {
