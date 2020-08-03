@@ -1,27 +1,27 @@
-# Noções básicas de Model
+# Noções básicas de Modelo
 
-Nesse tutorial você vai aprender o que são models no Sequelize e como usar eles.
+Nesse tutorial você vai aprender o que são modelos no Sequelize e como usar eles.
 
 ## Conceito
 
-Models são a essência do Sequelize. Um model é uma abstração que representa uma tabela em seu banco de dados. No Sequelize, é uma classe que extende [Model](../class/lib/model.js~Model.html).
+Modelos são a essência do Sequelize. Um modelo é uma abstração que representa uma tabela em seu banco de dados. No Sequelize, é uma classe que extende [Model](../class/lib/model.js~Model.html).
 
-O model fala ao Sequelize várias coisas sobre a entidade que ele representa, tal como o nome da tabela no banco de dados e quais colunas ele tem (e seus tipos de dados).
+O modelo fala ao Sequelize várias coisas sobre a entidade que ele representa, tal como o nome da tabela no banco de dados e quais colunas ele tem (e seus tipos de dados).
 
-Um model no Sequelize tem um nome. Esse nome não tem de ser o mesmo da tabela que ele representa no banco de dados. Geralmente, models tem nomes no singular (tal como `User`) enquanto tabelas tem nomes no plural (tal como `Users`), embora isso seja completamente configurável.
+Um modelo no Sequelize tem um nome. Esse nome não tem de ser o mesmo da tabela que ele representa no banco de dados. Geralmente, modelos tem nomes no singular (tal como `User`) enquanto tabelas tem nomes no plural (tal como `Users`), embora isso seja completamente configurável.
 
 ## Definição de uma Model
 
-Models podem ser definidas em duas maneiras equivalentes em Sequelize:
+Modelos podem ser definidas em duas maneiras equivalentes em Sequelize:
 
 * Chamando [`sequelize.define(modelName, attributes, options)`](../class/lib/sequelize.js~Sequelize.html#instance-method-define)
 * Extendendo [Model](../class/lib/model.js~Model.html) and calling [`init(attributes, options)`](../class/lib/model.js~Model.html#static-method-init)
 
-Depois de um model estar definido, ele está disponível dentro de `sequelize.models` pelo seu nome.
+Depois de um modelo estar definido, ele está disponível dentro de `sequelize.models` pelo seu nome.
 
-Para aprender com um exemplo, vamos considerar que queremos criar um model para representar users, no qual tem um `firstName` e um `lastName`. Queremos que nosso model seja chamado `User`, e a tabela que ele representa é chamada `Users` no banco de dados.
+Para aprender com um exemplo, vamos considerar que queremos criar um modelo para representar users, no qual tem um `firstName` e um `lastName`. Queremos que nosso modelo seja chamado `User`, e a tabela que ele representa é chamada `Users` no banco de dados.
 
-Ambas maneiras para definir esse model são mostradas abaixo. Depois de ser definido, podemos acessar nosso model com `sequelize.models.User`.
+Ambas maneiras para definir esse modelo são mostradas abaixo. Depois de ser definido, podemos acessar nosso modelo com `sequelize.models.User`.
 
 ### Usando [`sequelize.define`](../class/lib/sequelize.js~Sequelize.html#instance-method-define):
 
@@ -30,7 +30,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
 const User = sequelize.define('User', {
-  // Atributos do model são definidos aqui
+  // Atributos do modelo são definidos aqui
   firstName: {
     type: DataTypes.STRING,
     allowNull: false
@@ -40,7 +40,7 @@ const User = sequelize.define('User', {
     // allowNull true por padrão
   }
 }, {
-  // Outras opções do model vão aqui
+  // Outras opções do modelo vão aqui
 });
 
 // `sequelize.define` também returna o model
@@ -56,7 +56,7 @@ const sequelize = new Sequelize('sqlite::memory');
 class User extends Model {}
 
 User.init({
-  // Atributos do model são definidos aqui
+  // Atributos do modelo são definidos aqui
   firstName: {
     type: DataTypes.STRING,
     allowNull: false
@@ -66,12 +66,12 @@ User.init({
     // allowNull true por padrão
   }
 }, {
-  // Outras opções do model vão aqui
+  // Outras opções do modelo vão aqui
   sequelize, // Precisamos passar a instância da conexão
   modelName: 'User' // Precisamos escolher o nome do model
 });
 
-// O model definido é a classe em si
+// O modelo definido é a classe em si
 console.log(User === sequelize.models.User); // true
 ```
 
@@ -79,9 +79,9 @@ Internamente, `sequelize.define` chama `Model.init`, então ambas abordagens sã
 
 ## Inferência do nome da tabela
 
-Observe que, em ambos os métodos acima, o nome da tabela (`Users`) nunca foi explicitamente definido. No entanto, o nome dado ao model foi (`User`).
+Observe que, em ambos os métodos acima, o nome da tabela (`Users`) nunca foi explicitamente definido. No entanto, o nome dado ao modelo foi (`User`).
 
-Por padrão, quando o nome da tabela não é dado, Sequelize automaticamente pluraliza o nome do model e usa como o nome da tabela. Essa pluralização é feita embaixo do capô por uma library chamada [inflection](https://www.npmjs.com/package/inflection), assim plurais irregulares (tal como `person -> people`) são computados corretamente.
+Por padrão, quando o nome da tabela não é dado, Sequelize automaticamente pluraliza o nome do modelo e usa como o nome da tabela. Essa pluralização é feita embaixo do capô por uma library chamada [inflection](https://www.npmjs.com/package/inflection), assim plurais irregulares (tal como `person -> people`) são computados corretamente.
 
 Claro, esse comportamente é facilmente configurável.
 
@@ -97,7 +97,7 @@ sequelize.define('User', {
 });
 ```
 
-O exemplo acima vai criar um model chamado `User` apontando para uma tabela também chamada `User`:
+O exemplo acima vai criar um modelo chamado `User` apontando para uma tabela também chamada `User`:
 
 Esse comportamente pode também ser definido globalmente para a instância do sequelize, quando ele é criado:
 
@@ -127,7 +127,7 @@ sequelize.define('User', {
 
 Quando você define um model, você está dizendo ao Sequelize algumas coisas sobre sua tabela no banco de dados. No entanto, e se a tabela na verdade nem existir no banco de dados? E se existe, mas tem diferentes colunas, menos colunas, ou qualquer outra diferença?
 
-Isso é onde a sincronização do model entra. Um model pode ser sincronizado com o banco de dados chamando [`model.sync(options)`](https://sequelize.org/master/class/lib/model.js~Model.html#static-method-sync), uma função assíncrona (que retorna uma Promise). Com essa chamada, Sequelize vai automaticamente performar uma SQL query ao banco de dados. Note que isso altera somente a tabela no banco de dados, não o model no lado do Javascript.
+Isso é onde a sincronização do modelo entra. Um modelo pode ser sincronizado com o banco de dados chamando [`model.sync(options)`](https://sequelize.org/master/class/lib/model.js~Model.html#static-method-sync), uma função assíncrona (que retorna uma Promise). Com essa chamada, Sequelize vai automaticamente performar uma SQL query ao banco de dados. Note que isso altera somente a tabela no banco de dados, não o modelo no lado do Javascript.
 
 * `User.sync()` - Cria a tabela se ela não existe (e não faz nada se já existe)
 * `User.sync({ force: true })` - Cria a tabela, dropando ela primeiro se já existir
@@ -137,16 +137,16 @@ Exemplo:
 
 ```js
 await User.sync({ force: true });
-console.log("A tabela para o model User foi (re)criada!");
+console.log("A tabela para o modelo User foi (re)criada!");
 ```
 
-### Sincronizando todos os models de uma vez
+### Sincronizando todos os modelos de uma vez
 
 Você pode usar [`sequelize.sync()`](../class/lib/sequelize.js~Sequelize.html#instance-method-sync) para automaticamente sincronizar todos os models. Exemplo:
 
 ```js
 await sequelize.sync({ force: true });
-console.log("Todos os models foram sincronizados com sucesso.");
+console.log("Todos os modelos foram sincronizados com sucesso.");
 ```
 
 ### Dropando tabelas
@@ -184,7 +184,7 @@ Por padrão, Sequelize automaticamente adiciona os campos `createdAt` e `updated
 
 **Nota:** Isso é feito no Sequelize (ex: não é feito com *SQL triggers*).Isso significa que queries SQL direta (por exemplo queries performadas sem Sequelize, por qualquer outro meio), não vai atualizar esses campos automaticamente.
 
-Esse comportamente pode ser desativado por um model com a opção `timestamp: false`:
+Esse comportamente pode ser desativado por um modelo com a opção `timestamp: false`:
 
 ```js
 sequelize.define('User', {
@@ -255,7 +255,7 @@ sequelize.define('Foo', {
 
 ## Tipos de dados
 
-Toda coluna que você define em seu model deve ter um tipo de dado. Sequelize providencia [bastante tipos de dados built-in](https://github.com/sequelize/sequelize/blob/master/lib/data-types.js). Para acessar um tipo de dado built-in, você deve importar `DataTypes`:
+Toda coluna que você define em seu modelo deve ter um tipo de dado. Sequelize providencia [bastante tipos de dados built-in](https://github.com/sequelize/sequelize/blob/master/lib/data-types.js). Para acessar um tipo de dado built-in, você deve importar `DataTypes`:
 
 ```js
 const { DataTypes } = require("sequelize"); // Importa os tipos de dados built-in
@@ -382,7 +382,7 @@ Foo.init({
       // Essa é uma referência à um outro model
       model: Bar,
 
-      // Esse é o nome da coluna do model referenciado
+      // Esse é o nome da coluna do modelo referenciado
       key: 'id',
 
       // Com PostgreSQL, é opcionalmente possível declarar quando verificar a restrição de chave estrangeira, passando o tipo Deferrable.
@@ -410,9 +410,9 @@ Foo.init({
 });
 ```
 
-## Tirando vantagem dos Models serem classes
+## Tirando vantagem dos Modelos serem classes
 
-Os models Sequelize são [ES6 classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes). Você pode muito facilmente adicionar instância personalizada ou métodos.
+Os modelos Sequelize são [ES6 classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes). Você pode muito facilmente adicionar instância personalizada ou métodos.
 
 ```js
 class User extends Model {
