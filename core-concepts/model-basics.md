@@ -81,13 +81,13 @@ Internamente, `sequelize.define` chama `Model.init`, então ambas abordagens sã
 
 Observe que, em ambos os métodos acima, o nome da tabela (`Users`) nunca foi explicitamente definido. No entanto, o nome dado ao modelo foi (`User`).
 
-Por padrão, quando o nome da tabela não é dado, Sequelize automaticamente pluraliza o nome do modelo e usa como o nome da tabela. Essa pluralização é feita embaixo do capô por uma library chamada [inflection](https://www.npmjs.com/package/inflection), assim plurais irregulares (tal como `person -> people`) são computados corretamente.
+Por padrão, quando o nome da tabela não é dado, Sequelize automaticamente pluraliza o nome do modelo e usa como o nome da tabela. Essa pluralização é feita por baixo dos panos  por uma library chamada [inflection](https://www.npmjs.com/package/inflection), assim plurais irregulares (tal como `person -> people`) são computados corretamente.
 
 Claro, esse comportamente é facilmente configurável.
 
 ### Forçando o nome da tabela para ser igual ao nome do modelo
 
-Você pode pausar a auto-pluralização performada pelo Sequelize usando a opção `freezeTableName: true`. Dessa maneira, Sequelize vai inferir o nome da tabela para ser equal ao nome do modelo, sem qualquer modificações:
+Você pode pausar a auto-pluralização performada pelo Sequelize usando a opção `freezeTableName: true`. Dessa maneira, Sequelize vai inferir o nome da tabela para ser igual ao nome do modelo, sem qualquer modificações:
 
 ```js
 sequelize.define('User', {
@@ -127,10 +127,10 @@ sequelize.define('User', {
 
 Quando você define um modelo, você está dizendo ao Sequelize algumas coisas sobre sua tabela no banco de dados. No entanto, e se a tabela na verdade nem existir no banco de dados? E se existe, mas tem diferentes colunas, menos colunas, ou qualquer outra diferença?
 
-Isso é onde a sincronização do modelo entra. Um modelo pode ser sincronizado com o banco de dados chamando [`model.sync(options)`](https://sequelize.org/master/class/lib/model.js~Model.html#static-method-sync), uma função assíncrona (que retorna uma Promise). Com essa chamada, Sequelize vai automaticamente performar uma SQL query ao banco de dados. Note que isso altera somente a tabela no banco de dados, não o modelo no lado do Javascript.
+Isso é onde a sincronização do modelo entra. Um modelo pode ser sincronizado com o banco de dados chamando [`model.sync(opções)`](https://sequelize.org/master/class/lib/model.js~Model.html#static-method-sync), uma função assíncrona (que retorna uma Promise). Com essa chamada, Sequelize vai automaticamente executar uma  query SQL no banco de dados. Note que isso altera somente a tabela no banco de dados, não o modelo no lado do Javascript.
 
 * `User.sync()` - Cria a tabela se ela não existe (e não faz nada se já existe)
-* `User.sync({ force: true })` - Cria a tabela, dropando ela primeiro se já existir
+* `User.sync({ force: true })` - Cria a tabela, deletando ela primeiro se já existir
 * `User.sync({ alter: true })` - Verifica qual é o atual estado da tabela no banco de dados (quais colunas ela tem, quais são seus tipos de dados, etc), e então performa as mudanças necessárias no tabela para fazer corresponder o modelo.
 
 Exemplo:
@@ -149,20 +149,20 @@ await sequelize.sync({ force: true });
 console.log("Todos os modelos foram sincronizados com sucesso.");
 ```
 
-### Dropando tabelas
+### Deletando tabelas
 
-Para dropar a tabela relacionada ao modelo:
+Para deletar a tabela relacionada ao modelo:
 
 ```js
 await User.drop();
-console.log("Tabela User foi dropada!");
+console.log("Tabela User foi deletada!");
 ```
 
-Para dropar todas as tabelas:
+Para deletar todas as tabelas:
 
 ```js
 await sequelize.drop();
-console.log("Todas tabelas dropadas!");
+console.log("Todas as tabelas foram deletads!");
 ```
 
 ### Verificação de segurança do banco de dados
@@ -194,7 +194,7 @@ sequelize.define('User', {
 });
 ```
 
-É também possível ativar somente um dos `createdAt`/`updatedAt`, e providenciar um nome personalizado para essas colunas:
+Também é possível ativar somente um dos `createdAt`/`updatedAt`, e providenciar um nome personalizado para essas colunas:
 
 ```js
 class Foo extends Model {}
@@ -269,7 +269,7 @@ DataTypes.STRING(1234)       // VARCHAR(1234)
 DataTypes.STRING.BINARY      // VARCHAR BINARY
 DataTypes.TEXT               // TEXT
 DataTypes.TEXT('tiny')       // TINYTEXT
-DataTypes.CITEXT             // CITEXT          PostgreSQL e SQLite somente.
+DataTypes.CITEXT             // CITEXT          somente para PostgreSQL e SQLite.
 ```
 
 ### Boolean
@@ -289,9 +289,9 @@ DataTypes.FLOAT              // FLOAT
 DataTypes.FLOAT(11)          // FLOAT(11)
 DataTypes.FLOAT(11, 10)      // FLOAT(11,10)
 
-DataTypes.REAL               // REAL            PostgreSQL somente.
-DataTypes.REAL(11)           // REAL(11)        PostgreSQL somente.
-DataTypes.REAL(11, 12)       // REAL(11,12)     PostgreSQL somente.
+DataTypes.REAL               // REAL            somente para PostgreSQL.
+DataTypes.REAL(11)           // REAL(11)        somente para PostgreSQL.
+DataTypes.REAL(11, 12)       // REAL(11,12)     somente para PostgreSQL.
 
 DataTypes.DOUBLE             // DOUBLE
 DataTypes.DOUBLE(11)         // DOUBLE(11)
@@ -301,7 +301,7 @@ DataTypes.DECIMAL            // DECIMAL
 DataTypes.DECIMAL(10, 2)     // DECIMAL(10,2)
 ```
 
-#### Inteiros não assinados & inteiros Zerofill - MySQL/MariaDB somente
+#### Inteiros não assinados & inteiros Zerofill - somente para MySQL/MariaDB
 
 Em MySQL e MariaDB, os tipos de dados `INTEGER`, `BIGINT`, `FLOAT` e `DOUBLE` podem ser definidos como não assinados ou zerofill (ou ambos), como à seguir:
 
