@@ -25,7 +25,7 @@ _____
 │       assocs.md ✔️                        [gustavobordinho]                    
 │       getters-setters-virtuals.md ✔️      [droid95]
 │       getting-started.md ✔️               [lokinmodar]
-│       model-basics.md
+│       model-basics.md ✔️                  [droid95]
 │       model-instances.md
 │       model-querying-basics.md
 │       model-querying-finders.md
