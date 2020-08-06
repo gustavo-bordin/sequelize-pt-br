@@ -1,147 +1,147 @@
 # Sub Queries
 
-Consider you have two models, `Post` and `Reaction`, with a One-to-Many relationship set up, so that one post has many reactions:
+Suponha que você tem dois modelos, `Postagem` e `Reacao`, com um relacionamento de Um-Para-Muitos configurado entre eles, então uma postagem tem muitas reações:
 
 ```js
-const Post = sequelize.define('post', {
-    content: DataTypes.STRING
+const Postagem = sequelize.define('postagem', {
+    conteudo: DataTypes.STRING
 }, { timestamps: false });
 
-const Reaction = sequelize.define('reaction', {
+const Reacao = sequelize.define('reacao', {
     type: DataTypes.STRING
 }, { timestamps: false });
 
-Post.hasMany(Reaction);
-Reaction.belongsTo(Post);
+Postagem.hasMany(Reacao);
+Reacao.belongsTo(Postagem);
 ```
 
-*Note: we have disabled timestamps just to have shorter queries for the next examples.*
+*Nota: Desabilitamos os timestamps apenas para ter queries mais simples nos próximos exemplos.*
 
-Let's fill our tables with some data:
+Vamos preencher nossas tabelas com alguns dados:
 
 ```js
-async function makePostWithReactions(content, reactionTypes) {
-    const post = await Post.create({ content });
-    await Reaction.bulkCreate(
-        reactionTypes.map(type => ({ type, postId: post.id }))
+async function criarPostagemComReacoes(conteudo, tiposReacao) {
+    const postagem = await Postagem.create({ conteudo });
+    await Reacao.bulkCreate(
+        tiposReacao.map(tipo => ({ tipo, postagemId: postagem.id }))
     );
-    return post;
+    return postagem;
 }
 
-await makePostWithReactions('Hello World', [
+await criarPostagemComReacoes('Olá Mundo', [
     'Like', 'Angry', 'Laugh', 'Like', 'Like', 'Angry', 'Sad', 'Like'
 ]);
-await makePostWithReactions('My Second Post', [
+await criarPostagemComReacoes('Minha segunda postagem', [
     'Laugh', 'Laugh', 'Like', 'Laugh'
 ]);
 ```
 
-Now, we are ready for examples of the power of subqueries.
+Agora, estamos prontos para os exemplos do poder das sub-queries.
 
-Let's say we wanted to compute via SQL a `laughReactionsCount` for each post. We can achieve that with a sub-query, such as the following:
+Suponhamos que queremos calcular por SQL uma `contagemReacoesLaugh` para cada postagem. Podemos fazer isso com as sub-queries, como o seguinte:
 
 ```sql
 SELECT
     *,
     (
         SELECT COUNT(*)
-        FROM reactions AS reaction
+        FROM reacoes AS reacao
         WHERE
-            reaction.postId = post.id
+            reacao.postagemId = postagem.id
             AND
-            reaction.type = "Laugh"
-    ) AS laughReactionsCount
-FROM posts AS post
+            reacao.tipo = "Laugh"
+    ) AS contagemReacoesLaugh
+FROM postagens AS postagem
 ```
 
-If we run the above raw SQL query through Sequelize, we get:
+Se rodarmos a query acima através do Sequelize, teremos:
 
 ```json
 [
   {
     "id": 1,
-    "content": "Hello World",
-    "laughReactionsCount": 1
+    "conteudo": "Olá Mundo",
+    "contagemReacoesLaugh": 1
   },
   {
     "id": 2,
-    "content": "My Second Post",
-    "laughReactionsCount": 3
+    "content": "Minha segunda postagem",
+    "contagemReacoesLaugh": 3
   }
 ]
 ```
 
-So how can we achieve that with more help from Sequelize, without having to write the whole raw query by hand?
+Então como podemos ter o mesmo resultado acima com uma ajudinha do Sequelize, sem ter que escrever toda a query manualmente?
 
-The answer: by combining the `attributes` option of the finder methods (such as `findAll`) with the `sequelize.literal` utility function, that allows you to directly insert arbitrary content into the query without any automatic escaping.
+A resposta é: combinando a opção `attributes` dos métodos finders (como `findAll`) com a função utilitária `sequelize.literal`, isso te permite inserir diretamente conteudo arbitrário na query sem escape automático.
 
-This means that Sequelize will help you with the main, larger query, but you will still have to write that sub-query by yourself:
+Isso significa que o Sequelize te ajudará com a maior e principal query, mas você ainda terá que escrever a subquery sozinho:
 
 ```js
-Post.findAll({
+Postagem.findAll({
     attributes: {
         include: [
             [
-                // Note the wrapping parentheses in the call below!
+                // Note os parênteses envolvendo a chamada abaixo
                 sequelize.literal(`(
                     SELECT COUNT(*)
-                    FROM reactions AS reaction
+                    FROM reacoes AS reacao
                     WHERE
-                        reaction.postId = post.id
+                        reacao.postagemId = postagem.id
                         AND
-                        reaction.type = "Laugh"
+                        reacao.type = "Laugh"
                 )`),
-                'laughReactionsCount'
+                'contagemReacoesLaugh'
             ]
         ]
     }
 });
 ```
 
-*Important Note: Since `sequelize.literal` inserts arbitrary content without escaping to the query, it deserves very special attention since it may be a source of (major) security vulnerabilities. It should not be used on user-generated content.* However, here, we are using `sequelize.literal` with a fixed string, carefully written by us (the coders). This is ok, since we know what we are doing.
+*Nota importante: Já que `sequelize.literal` insere conteudo arbitrário sem escapar para a query, a função merece uma atenção redobrada, pois pode ser a principal fonte de vulnerabilidades. Não deveria ser usada em conteudos gerados pelo usuário.* Contudo, aqui, estamos usando `sequelize.literal` com uma string fixa, cuidadosamente escrita por nós (os programadores). Dessa forma está tudo bem, desde que sabemos o que estamos fazendo.
 
-The above gives the following output:
+O exemplo acima gera o seguinte resultado:
 
 ```json
 [
   {
     "id": 1,
-    "content": "Hello World",
-    "laughReactionsCount": 1
+    "conteudo": "Olá Mundo",
+    "contagemReacoesLaugh": 1
   },
   {
     "id": 2,
-    "content": "My Second Post",
-    "laughReactionsCount": 3
+    "content": "Minha segunda postagem",
+    "contagemReacoesLaugh": 3
   }
 ]
 ```
 
-Success!
+Sucesso!
 
-## Using sub-queries for complex ordering
+## Usando sub-queries para ordenar os resultados
 
-This idea can be used to enable complex ordering, such as ordering posts by the number of laugh reactions they have:
+Essa ideia pode ser usada para ordenar os resultados, desde a ordenação simples até a mais complexa, aqui, vamos ordenar as postagens pelo numero de reações 'Laugh' que elas obtiveram:
 
 ```js
-Post.findAll({
+Postagem.findAll({
     attributes: {
         include: [
             [
                 sequelize.literal(`(
                     SELECT COUNT(*)
-                    FROM reactions AS reaction
+                    FROM reacoes AS reacao
                     WHERE
-                        reaction.postId = post.id
+                        reacao.postagemId = postagem.id
                         AND
-                        reaction.type = "Laugh"
+                        reacao.type = "Laugh"
                 )`),
-                'laughReactionsCount'
+                'contagemReacoesLaugh'
             ]
         ]
     },
     order: [
-        [sequelize.literal('laughReactionsCount'), 'DESC']
+        [sequelize.literal('contagemReacoesLaugh'), 'DESC']
     ]
 });
 ```
@@ -152,13 +152,13 @@ Result:
 [
   {
     "id": 2,
-    "content": "My Second Post",
-    "laughReactionsCount": 3
+    "conteudo": "Minha segunda postagem",
+    "contagemReacoesLaugh": 3
   },
   {
     "id": 1,
-    "content": "Hello World",
-    "laughReactionsCount": 1
+    "conteudo": "Olá mundo",
+    "contagemReacoesLaugh": 1
   }
 ]
 ```
