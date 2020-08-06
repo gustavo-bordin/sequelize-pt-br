@@ -54,5 +54,4 @@ _____
         transactions.md
         typescript.md
         upgrade-to-v6.md
-        whos-using.md
 ```
