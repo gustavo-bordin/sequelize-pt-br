@@ -50,9 +50,8 @@ _____
         read-replication.md
         resources.md
         scopes.md
-        sub-queries.md
+        sub-queries.md ✔️                    [gustavobordinho]
         transactions.md
         typescript.md
         upgrade-to-v6.md
-        whos-using.md
 ```
