@@ -43,14 +43,14 @@ _____
         legacy.md
         legal.md
         migrations.md
-        naming-strategies.md
+        naming-strategies.md ✔️             [gustavobordinho]
         optimistic-locking.md
         other-data-types.md
         query-interface.md
         read-replication.md
         resources.md
         scopes.md
-        sub-queries.md ✔️                    [gustavobordinho]
+        sub-queries.md ✔️                   [gustavobordinho]
         transactions.md
         typescript.md
         upgrade-to-v6.md
