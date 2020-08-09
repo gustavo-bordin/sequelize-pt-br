@@ -1,67 +1,66 @@
 # Raw Queries
 
-As there are often use cases in which it is just easier to execute raw / already prepared SQL queries, you can use the [`sequelize.query`](../class/lib/sequelize.js~Sequelize.html#instance-method-query) method.
+Como há muitos casos de uso em que é mais facil executar uma query bruta / queries já preparadas, você pode usar o método [`sequelize.query`](../class/lib/sequelize.js~Sequelize.html#instance-method-query).
 
-By default the function will return two arguments - a results array, and an object containing metadata (such as amount of affected rows, etc). Note that since this is a raw query, the metadata are dialect specific. Some dialects return the metadata "within" the results object (as properties on an array). However, two arguments will always be returned, but for MSSQL and MySQL it will be two references to the same object.
+Por padrão a função retornará dois argumentos - um array de resultados e um objeto contendo metadados (como a quantidade de linhas afetadas, etc). Note que como se trata de uma query bruta, os metadados são específicos para cada dialeto. Alguns dialetos retornam os metadados dentro do objeto de resultado (como propriedados em um array). Contudo, dois argumentos sempre serão retornados, porém para MSSQL e MySQL será duas referências ao mesmo objeto.
 
 ```js
 const [results, metadata] = await sequelize.query("UPDATE users SET y = 42 WHERE x = 12");
-// Results will be an empty array and metadata will contain the number of affected rows.
+// O resultado será um array vazio e o metadado irá conter o numero de linhas afetadas.
 ```
 
-In cases where you don't need to access the metadata you can pass in a query type to tell sequelize how to format the results. For example, for a simple select query you could do:
+Em casos que você não precise dos metadados, você pode dizer na query como o Sequelize deve formatar os resultados. Por exemplo, para uma simples query de SELECT, você pode fazer:
 
 ```js
 const { QueryTypes } = require('sequelize');
 const users = await sequelize.query("SELECT * FROM `users`", { type: QueryTypes.SELECT });
-// We didn't need to destructure the result here - the results were returned directly
+// Não precisamos desestruturar os resultados aqui - Os resultados serão retornados diretamente
 ```
 
-Several other query types are available. [Peek into the source for details](https://github.com/sequelize/sequelize/blob/master/lib/query-types.js).
+Muitas outras queries estão disponíveis. [Veja no código para detalhes](https://github.com/sequelize/sequelize/blob/master/lib/query-types.js).
 
-A second option is the model. If you pass a model the returned data will be instances of that model.
+Uma segunda opção é o model. Se você definir um, os dados retornados serão instâncias desse model.
 
 ```js
-// Callee is the model definition. This allows you to easily map a query to a predefined model
+// A definição do model abaixo é chamada de Calle. Isso permite mapear facilmente a query para um model predefinido.
 const projects = await sequelize.query('SELECT * FROM projects', {
   model: Projects,
   mapToModel: true // pass true here if you have any mapped fields
 });
-// Each element of `projects` is now an instance of Project
+// Agora cada elemento de 'projects' será uma instância de Projects
 ```
 
-See more options in the [query API reference](../class/lib/sequelize.js~Sequelize.html#instance-method-query). Some examples:
+Veja mais opções em [Referência da API da query](../class/lib/sequelize.js~Sequelize.html#instance-method-query). Alguns exemplos:
 
 ```js
 const { QueryTypes } = require('sequelize');
 await sequelize.query('SELECT 1', {
-  // A function (or false) for logging your queries
-  // Will get called for every SQL query that gets sent
-  // to the server.
+  // Uma função (ou falso) para mostrar logs de sua query
+  // Será chamada para todas as queries SQL enviadas ao servidor
   logging: console.log,
 
-  // If plain is true, then sequelize will only return the first
-  // record of the result set. In case of false it will return all records.
+  // Se plain for true, então o sequelize retornará apenas o primeiro
+  // registro do conjunto de registros. Se for falso, retornará todos
   plain: false,
 
-  // Set this to true if you don't have a model definition for your query.
+  // Deixe isso como true se você não tiver uma definição de model para sua query.
   raw: false,
 
-  // The type of query you are executing. The query type affects how results are formatted before they are passed back.
+  // O tipo de query que você está executando. O tipo da query altera a forma em que o resultado é formatado antes de ser retornado.
   type: QueryTypes.SELECT
 });
 
-// Note the second argument being null!
-// Even if we declared a callee here, the raw: true would
-// supersede and return a raw object.
+// Note o segundo argumento sendo 'null'!
+// Mesmo se você declarar um callee aqui (definir um model), a opção 'raw: true' 
+// iria sobrescrever e retornar um objeto bruto
 console.log(await sequelize.query('SELECT * FROM projects', { raw: true }));
 ```
 
-## "Dotted" attributes and the `nest` option
+## Atributos "Dotted" e a opção `nest`
 
-If an attribute name of the table contains dots, the resulting objects can become nested objects by setting the `nest: true` option. This is achieved with [dottie.js](https://github.com/mickhansen/dottie.js/) under the hood. See below:
+Se o nome de um atributo na tabela conter pontos, os objetos resultantes podem se tornar objetos aninhados definindo a opção `nest: true`. Isso é feito com [dottie.js](https://github.com/mickhansen/dottie.js/) por baixo dos panos. Veja abaixo:
 
-* Without `nest: true`:
+* Sem `nest: true`:
 
   ```js
   const { QueryTypes } = require('sequelize');
@@ -77,7 +76,7 @@ If an attribute name of the table contains dots, the resulting objects can becom
   }
   ```
 
-* With `nest: true`:
+* Com `nest: true`:
 
   ```js
   const { QueryTypes } = require('sequelize');
@@ -98,12 +97,12 @@ If an attribute name of the table contains dots, the resulting objects can becom
   }
   ```
 
-## Replacements
+## Substituições
 
-Replacements in a query can be done in two different ways, either using named parameters (starting with `:`), or unnamed, represented by a `?`. Replacements are passed in the options object.
+Substituições na query pode ser feitas através de duas formas, usando parâmetros nomeados  (começando com `:`), ou não nomeados, representado por um `?`. Substituições são passadas no objeto de opções
 
-* If an array is passed, `?` will be replaced in the order that they appear in the array
-* If an object is passed, `:key` will be replaced with the keys from that object. If the object contains keys not found in the query or vice versa, an exception will be thrown.
+* Se um array for passado, `?` será substituido pelo elemento de ordem correspondente.
+* Se um objeto for passado, `:key` será substituido pelas chaves desse objeto. Se o objeto conter chaves que não existe na query, ou vice-versa, um erro será gerado.
 
 ```js
 const { QueryTypes } = require('sequelize');
@@ -125,7 +124,7 @@ await sequelize.query(
 );
 ```
 
-Array replacements will automatically be handled, the following query searches for projects where the status matches an array of values.
+As substituições de array serão tratadas automaticamente, a query a seguir procura em que o status corresponde com um array de valores:
 
 ```js
 const { QueryTypes } = require('sequelize');
@@ -139,7 +138,7 @@ await sequelize.query(
 );
 ```
 
-To use the wildcard operator `%`, append it to your replacement. The following query matches users with names that start with 'ben'.
+Para usar o operador curinga `%`, anexe-o ao seu substituto. A query a seguir corresponde a usuários com nomes que começam com 'ben'.
 
 ```js
 const { QueryTypes } = require('sequelize');
@@ -153,17 +152,18 @@ await sequelize.query(
 );
 ```
 
-## Bind Parameter
+## Parâmetro Bind
 
-Bind parameters are like replacements. Except replacements are escaped and inserted into the query by sequelize before the query is sent to the database, while bind parameters are sent to the database outside the SQL query text. A query can have either bind parameters or replacements. Bind parameters are referred to by either $1, $2, ... (numeric) or $key (alpha-numeric). This is independent of the dialect.
+Parâmetros Bind são como substituições. Porém as substituições são escapadas e inseridas na consulta pelo Sequelize antes ela seja enviada ao banco de dados, enquanto parâmetros bind são enviadas ao banco de dados fora da string do SQL. Uma query pode ter tanto parâmetros bind quanto substituições. Parâmetros bind são referenciados por $1, $2, ... (numérico) ou $key (alpha-numérico). Isso para todos os bancos de dados.
 
-* If an array is passed, `$1` is bound to the 1st element in the array (`bind[0]`)
-* If an object is passed, `$key` is bound to `object['key']`. Each key must begin with a non-numeric char. `$1` is not a valid key, even if `object['1']` exists.
-* In either case `$$` can be used to escape a literal `$` sign.
+* Se um array for passado, `$1` é ligado ao primeiro elemento do array (`bind[0]`)
+* Se um objeto for passado, `$key` é ligado ao `object['key']`. Cada chave deve começar com um caractere não numérico. `$1` não é uma chave válida, mesmo se `object['1']` existir.
+* em ambos os casos `$$` pode ser usado para escapar o caractere `$`.
 
-The array or object must contain all bound values or Sequelize will throw an exception. This applies even to cases in which the database may ignore the bound parameter.
+O array ou o objeto deve ter todos os valores vinculados, ou o Sequelize lançará uma exceção.
+Isso se aplica até mesmo aos casos em que o banco de dados ignore o(s) parâmetro(s) vinculado(s).
 
-The database may add further restrictions to this. Bind parameters cannot be SQL keywords, nor table or column names. They are also ignored in quoted text or data. In PostgreSQL it may also be needed to typecast them, if the type cannot be inferred from the context `$1::varchar`.
+O banco de dados pode adicionar outras restrições a isso. Os parâmetros bind não podem ser palavras reservadas do SQL, nem tabelas e colunas. Eles também são ignorados em textos ou dados citados. No PostgreSQL, também pode ser necessário fazer o typecast deles, se o tipo não puder ser inferido a partir do contexto `$ 1 :: varchar`.
 
 ```js
 const { QueryTypes } = require('sequelize');
