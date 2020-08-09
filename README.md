@@ -30,7 +30,7 @@ _____
 │       model-querying-basics.md
 │       model-querying-finders.md
 │       paranoid.md ✔️                      [gustavobordinho]
-│       raw-queries.md
+│       raw-queries.md ✔️                   [gustavobordinho]
 │       validations-and-constraints.md
 |
 └───other-topics
