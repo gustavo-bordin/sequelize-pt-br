@@ -28,7 +28,7 @@ _____
 │       model-basics.md ✔️                  [droid95]
 │       model-instances.md
 │       model-querying-basics.md
-│       model-querying-finders.md
+│       model-querying-finders.md ✔️        [glauberbrack]
 │       paranoid.md ✔️                      [gustavobordinho]
 │       raw-queries.md ✔️                   [gustavobordinho]
 │       validations-and-constraints.md
