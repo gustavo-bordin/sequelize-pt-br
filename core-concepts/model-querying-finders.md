@@ -1,16 +1,18 @@
-# Model Querying - Finders
+# Consulta de Modelo - Localizadores
 
-Finder methods are the ones that generate `SELECT` queries.
+Metodos localizadores são aqueles que geram consultas do tipo `SELECT`.
 
-By default, the results of all finder methods are instances of the model class (as opposed to being just plain JavaScript objects). This means that after the database returns the results, Sequelize automatically wraps everything in proper instance objects. In a few cases, when there are too many results, this wrapping can be inefficient. To disable this wrapping and receive a plain response instead, pass `{ raw: true }` as an option to the finder method.
+Por padrão, os resultados de todos os métodos localizadores são instâncias da classe modelo (ao invés de serem apenas objetos JavaScript simples). Isso significa que após
+a base de dados retornar os resultados, o Sequelize, automaticamente, realiza a junção de tudo em objetos de instância apropriados. em alguns casos, quando existem muitos resultados, a junção pode ser ineficiente. Para receber uma resposta simplifica e desabilitar essa funcão, é necessário passar `{ raw: true }` como uma opção para o método
+de busca.
 
 ## `findAll`
 
-The `findAll` method is already known from the previous tutorial. It generates a standard `SELECT` query which will retrieve all entries from the table (unless restricted by something like a `where` clause, for example).
+O método `findAll` já é conhecido do tutorial anterior. Ele gera uma consulta padrão `SELECT` que vai recuperar todas as entradas da tabela (a menos que que exista uma restrição, como por exemplo um `where`).
 
 ## `findByPk`
 
-The `findByPk` method obtains only a single entry from the table, using the provided primary key.
+O método `findByPk` retorna somente uma única entrada da table, utilizando a chave primária (primary key) fornecida.
 
 ```js
 const project = await Project.findByPk(123);
@@ -18,13 +20,13 @@ if (project === null) {
   console.log('Not found!');
 } else {
   console.log(project instanceof Project); // true
-  // Its primary key is 123
+  // A chave primária é 123
 }
 ```
 
 ## `findOne`
 
-The `findOne` method obtains the first entry it finds (that fulfills the optional query options, if provided).
+O método `findOne` retorna o primeiro objeto encontrado (que preenche as informações opcionais de consulta, caso sejam fornecidas).
 
 ```js
 const project = await Project.findOne({ where: { title: 'My Title' } });
@@ -38,11 +40,12 @@ if (project === null) {
 
 ## `findOrCreate`
 
-The method `findOrCreate` will create an entry in the table unless it can find one fulfilling the query options. In both cases, it will return an instance (either the found instance or the created instance) and a boolean indicating whether that instance was created or already existed.
+O método `findOrCreate` irá criar uma entrada na tabela a menino que encontre uma entrada que preencha as opções de consulta. Em ambos os casos, o metódo retornará uma instância (mesmo se encontrada ou criada uma instância) e um valor booleano, indicando se a instância foi criada ou se já existia
 
-The `where` option is considered for finding the entry, and the `defaults` option is used to define what must be created in case nothing was found. If the `defaults` do not contain values for every column, Sequelize will take the values given to `where` (if present).
+A opção whe`where`re é considerada para encontrar uma entrada, e a opção `defaults` é utilizada para definir o que deve ser criado em caso de nada ser encontrado. Se a opção
+`defaults` não possui um valor para toda coluna, o Sequelize irá utilizar os valores fornecidos ao `where` (caso exista).
 
-Let's assume we have an empty database with a `User` model which has a `username` and a `job`.
+Vamos assumir que nós temos uma base de dados vazia com uma model `User` que possui um `username` e um `job`.
 
 ```js
 const [user, created] = await User.findOrCreate({
@@ -52,21 +55,22 @@ const [user, created] = await User.findOrCreate({
   }
 });
 console.log(user.username); // 'sdepold'
-console.log(user.job); // This may or may not be 'Technical Lead JavaScript'
-console.log(created); // The boolean indicating whether this instance was just created
+console.log(user.job); // Isso pode ser ou não 'Technical Lead JavaScript'
+console.log(created); // O valor booleano indica se a instância foi criada
 if (created) {
-  console.log(user.job); // This will certainly be 'Technical Lead JavaScript'
+  console.log(user.job); // Isso certamente será 'Technical Lead JavaScript'
 }
 ```
 
 ## `findAndCountAll`
 
-The `findAndCountAll` method is a convenience method that combines `findAll` and `count`. This is useful when dealing with queries related to pagination where you want to retrieve data with a `limit` and `offset` but also need to know the total number of records that match the query.
+O método `findAndCountAll` é um método de conveção que combina outros dois, `findAll` e `count`. Tal método é útil quando lidamos com consultas relacionadas a paginação
+nas quais você deseja recuperar dados um `limit` e `offset`, mas também o total de de registros que satisfaçam a consulta.
 
-The `findAndCountAll` method returns an object with two properties:
+O método `findAndCountAll` retorna um objeto com duas propriedades:
 
-* `count` - an integer - the total number records matching the query
-* `rows` - an array of objects - the obtained records
+* `count` - um inteiro - número total de registros que satisfaçam a consulta
+* `rows` - um array de objetos - registros obtidos
 
 ```js
 const { count, rows } = await Project.findAndCountAll({
